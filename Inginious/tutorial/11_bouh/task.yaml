@@ -1,0 +1,32 @@
+accessible: true
+author: Kappa
+context: |-
+    .. container:: row
+
+       .. container:: col-xs-8 col-md-9 text-justify
+
+          sushi
+environment: default
+evaluate: best
+groups: false
+limits:
+    time: '3'
+    memory: '100'
+    output: '2'
+name: 11. Bouh
+network_grading: false
+order: 0
+problems:
+    thecode:
+        name: Bouh !
+        language: python
+        type: code
+        header: |-
+            Here you are asked to provide a basic Python 3 program answering to bouh on standard output.
+
+            *Hint :* to display something on standard output, use the built-in ``print`` method.
+stored_submissions: 0
+submission_limit:
+    amount: -1
+    period: -1
+weight: 999999.0
