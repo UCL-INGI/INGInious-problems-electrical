@@ -36,7 +36,16 @@
 				
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
-				
+				graph.view.scale = 1;
+                                graph.setPanning(true);
+			        graph.setConnectable(true);
+			        graph.setConnectableEdges(true);
+			        graph.setDisconnectOnMove(false);
+			        graph.foldingEnabled = false;
+                                //Maximum size
+			        graph.maximumGraphBounds = new mxRectangle(0, 0, 1800, 1600)
+			        graph.border = 50;
+
 				var styleV = graph.getStylesheet().getDefaultVertexStyle();
 				styleV['movable'] = '1';
 				styleV['resizable'] = '0';
@@ -131,7 +140,7 @@
 	</script>
 
 	<script type="text/javascript">
-		function InductorShape() { };
+                function InductorShape() { };
 		InductorShape.prototype = new mxCylinder();
 		InductorShape.prototype.constructor = InductorShape;
 
@@ -158,6 +167,39 @@
 
 		mxCellRenderer.registerShape('inductor', InductorShape);
 	</script>
+
+	<script type ="text/javascript">
+                function VoltageShape() {};
+		VoltageShape.prototype = new mxCylinder();
+		VoltageShape.prototype.constructor = VoltageShape;
+
+		VoltageShape.prototype.redrawPath = function(path, x, y, w, h, isForeground)
+		{
+			var dx = w / 6;
+                        var dy = h / 6;
+
+			if (isForeground)
+			{
+				path.moveTo(0, h/2);
+				path.lineTo(dx, h/2);
+				path.lineTo(dx, h/2-dy);
+				path.curveTo(dx, h/2-dy, 1.5*dx, h/2-5*dy, 2*dx, h/2-dy);
+				path.curveTo(2*dx, h/2-dy, 2.5*dx, h/2-5*dy, 3*dx, h/2-dy);
+				path.curveTo(3*dx, h/2-dy, 3.5*dx, h/2-5*dy, 4*dx, h/2-dy);
+				path.curveTo(4*dx, h/2-dy, 4.5*dx, h/2-5*dy, 5*dx, h/2-dy);
+				path.lineTo(5*dx, h/2);
+				path.lineTo(w, h/2);
+
+				path.end();
+			}
+		};
+
+		mxCellRenderer.registerShape('inductor', InductorShape);
+
+        </script>
+                
+     
+		 
 </head>
 
 <!-- Page passes the container for the graph to the program -->
@@ -165,7 +207,7 @@
 
 	<!-- Creates a container for the graph with a grid wallpaper -->
 	<div id="graphContainer"
-		style="position:relative;overflow:hidden;width:321px;height:241px;background:url('editors/images/grid.gif');cursor:default;">
+		style="position:relative;overflow:hidden;width:1440px;height:720px;background:url('editors/images/grid.gif');cursor:default;">
 	</div>
 </body>
 </html>
