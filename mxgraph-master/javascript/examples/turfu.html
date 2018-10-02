@@ -15,7 +15,7 @@
 
 	<!-- Loads and initializes the library -->
 	<script type="text/javascript" src="../src/js/mxClient.js"></script>
-
+    <script type="text/javascript" src="../src/js/eleccomponent.js"></script>
 	<!-- Example code -->
 	<script type="text/javascript">
 		// Program starts here. Creates a sample graph in the
@@ -34,30 +34,89 @@
 				// Disables the built-in context menu
 				mxEvent.disableContextMenu(container);
 				
+				var doc = mxUtils.createXmlDocument();
+				var Resistor1 = doc.createElement('Res');
+				Resistor1.setAttribute('Name', 'lol');
+				Resistor1.setAttribute('Value', 5);
+
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
-				graph.view.scale = 1;
-                                graph.setPanning(true);
-			        graph.setConnectable(true);
-			        graph.setConnectableEdges(true);
-			        graph.setDisconnectOnMove(false);
-			        graph.foldingEnabled = false;
-                                //Maximum size
-			        graph.maximumGraphBounds = new mxRectangle(0, 0, 1800, 1600)
-			        graph.border = 50;
-
+				
+                //Maximum size
+			    graph.maximumGraphBounds = new mxRectangle(0, 0, 1800, 1600)
+			    graph.border = 50;
 				var styleV = graph.getStylesheet().getDefaultVertexStyle();
 				styleV['movable'] = '1';
-				styleV['resizable'] = '0';
-
+				styleV['resizable'] = '1';
+				styleV[mxConstants.STYLE_STROKECOLOR] = '#000000';
+				styleV[mxConstants.STYLE_FILLCOLOR] = '#FFFF00';
 				var styleE = graph.getStylesheet().getDefaultEdgeStyle();
 				delete styleE['endArrow'];
-				styleE['movable'] = '0';
+				styleE['movable'] = '1';
 				styleE['resizable'] = '0';
-
-
+				styleE['edgeStyle'] = 'wireEdgeStyle';
+				styleE['fontSize'] = '9';
+				styleE['movable'] = '0';
 				// Enables rubberband selection
 				new mxRubberband(graph);
+
+				// Overrides method to store a cell label in the model
+
+
+				// Overrides method to provide a cell label in the display
+				graph.convertValueToString = function(cell)
+				{
+					if (mxUtils.isNode(cell.value))
+					{
+						if (cell.value.nodeName.toLowerCase() == 'res')
+						{
+							var Name = cell.getAttribute('Name', '');
+							var Value = cell.getAttribute('Value', '');
+
+							if (Value != null && Value.length > 0)
+							{
+								return Value + ', ' + Name;
+							}
+
+							return Name;
+						}
+
+						else  {
+
+							return cell.value.nodeName.toLowerCase();
+						}
+						
+					}
+
+					return cell.value;
+				};
+
+
+				var cellLabelChanged = graph.cellLabelChanged;
+				graph.cellLabelChanged = function(cell, newValue, autoSize)
+				{
+					if (mxUtils.isNode(cell.value) &&
+						cell.value.nodeName.toLowerCase() == 'res')
+					{
+						var pos = newValue.indexOf(' ');
+
+						var Name = (pos > 0) ? newValue.substring(0,
+								pos) : newValue;
+						var Value = (pos > 0) ? newValue.substring(
+								pos + 1, newValue.length) : '';
+
+						// Clones the value for correct undo/redo
+						var elt = cell.value.cloneNode(true);
+
+						elt.setAttribute('firstName', firstName);
+						elt.setAttribute('lastName', lastName);
+
+						newValue = elt;
+						autoSize = true;
+					}
+					
+					cellLabelChanged.apply(this, arguments);
+				};
 				
 				// Gets the default parent for inserting new cells. This
 				// is normally the first child of the root (ie. layer 0).
@@ -67,10 +126,10 @@
 				graph.getModel().beginUpdate();
 				try
 				{
-					var v1 = graph.insertVertex(parent, null, 'R1', 20, 150, 80, 30, 'shape=resistor;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v1 = graph.insertVertex(parent, null, Resistor1, 20, 150, 80, 30, 'shape=resistor;verticalLabelPosition=top;verticalAlign=bottom;');
 					var v2 = graph.insertVertex(parent, null, 'R2D2', 200, 150, 80, 30, 'shape=resistor;verticalLabelPosition=top;verticalAlign=bottom;');
 					var v3 = graph.insertVertex(parent, null, 'Kappa', 20, 20, 80, 40, 'shape=capacitor;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v4 = graph.insertVertex(parent, null, 'L1', 150, 20, 100, 60, 'shape=inductor;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v4 = graph.insertVertex(parent, null, 'L1', 150, 20, 80, 40, 'shape=voltage;verticalLabelPosition=top;verticalAlign=bottom;');
 					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'entryX=0;entryY=0.5;entryPerimeter=0;exitX=1;exitY=0.5;');
 					
 				}
@@ -83,123 +142,139 @@
 		};
 	</script>
 
-	<script type="text/javascript">
-		function ResistorShape() { };
-		ResistorShape.prototype = new mxCylinder();
-		ResistorShape.prototype.constructor = ResistorShape;
-
-		ResistorShape.prototype.redrawPath = function(path, x, y, w, h, isForeground)
-		{
-			var dx = w / 16;
-
-			if (isForeground)
-			{
-				path.moveTo(0, h / 2);
-				path.lineTo(2 * dx, h / 2);
-				path.lineTo(3 * dx, 0);
-				path.lineTo(5 * dx, h);
-				path.lineTo(7 * dx, 0);
-				path.lineTo(9 * dx, h);
-				path.lineTo(11 * dx, 0);
-				path.lineTo(13 * dx, h);
-				path.lineTo(14 * dx, h / 2);
-				path.lineTo(16 * dx, h / 2);
-
-				path.end();
-			}
-		};
-
-		mxCellRenderer.registerShape('resistor', ResistorShape);
-	</script>
 
 	<script type="text/javascript">
-		function CapacitorShape() { };
-		CapacitorShape.prototype = new mxCylinder();
-		CapacitorShape.prototype.constructor = CapacitorShape;
-
-		CapacitorShape.prototype.redrawPath = function(path, x, y, w, h, isForeground)
+	mxEdgeStyle.WireConnector = function(state, source, target, hints, result)
+	{
+		// Creates array of all way- and terminalpoints
+		var pts = state.absolutePoints;
+		var horizontal = true;
+		var hint = null;
+		
+		// Gets the initial connection from the source terminal or edge
+		if (source != null && state.view.graph.model.isEdge(source.cell))
 		{
-			var dx = w / 16;
-
-			if (isForeground)
+			horizontal = state.style['sourceConstraint'] == 'horizontal';
+		}
+		else if (source != null)
+		{
+			horizontal = source.style['portConstraint'] != 'vertical';
+			
+			// Checks the direction of the shape and rotates
+			var direction = source.style[mxConstants.STYLE_DIRECTION];
+			
+			if (direction == 'north' || direction == 'south')
 			{
-				path.moveTo(0, h/2);
-				path.lineTo(w/2-dx, h/2);
-				path.moveTo(w/2+dx, 0);
-				path.lineTo(w/2+dx, h);
-				path.moveTo(w/2-dx, 0);
-				path.lineTo(w/2-dx, h);
-				path.moveTo(w/2+dx, h/2);
-				path.lineTo(w, h/2);
-
-				path.end();
+				horizontal = !horizontal;
 			}
-		};
+		}
+		
+		// Adds the first point
+		// TODO: Should move along connected segment
+		var pt = pts[0];
+		
+		if (pt == null && source != null)
+		{
+			pt = new mxPoint(state.view.getRoutingCenterX(source), state.view.getRoutingCenterY(source));
+		}
+		else if (pt != null)
+		{
+			pt = pt.clone();
+		}
+		
+		var first = pt;
 
-		mxCellRenderer.registerShape('capacitor', CapacitorShape);
+		// Adds the waypoints
+		if (hints != null && hints.length > 0)
+		{
+			// FIXME: First segment not movable
+			/*hint = state.view.transformControlPoint(state, hints[0]);
+			mxLog.show();
+			mxLog.debug(hints.length,'hints0.y='+hint.y, pt.y)
+			
+			if (horizontal && Math.floor(hint.y) != Math.floor(pt.y))
+			{
+				mxLog.show();
+				mxLog.debug('add waypoint');
+
+				pt = new mxPoint(pt.x, hint.y);
+				result.push(pt);
+				pt = pt.clone();
+				//horizontal = !horizontal;
+			}*/
+			
+			for (var i = 0; i < hints.length; i++)
+			{
+				horizontal = !horizontal;
+				hint = state.view.transformControlPoint(state, hints[i]);
+
+				if (horizontal)
+				{
+					if (pt.y != hint.y)
+					{
+						pt.y = hint.y;
+						result.push(pt.clone());
+					}
+				}
+				else if (pt.x != hint.x)
+				{
+					pt.x = hint.x;
+					result.push(pt.clone());
+				}
+			}
+		}
+		else
+		{
+			hint = pt;
+		}
+
+		// Adds the last point
+		pt = pts[pts.length - 1];
+
+		// TODO: Should move along connected segment
+		if (pt == null && target != null)
+		{
+			pt = new mxPoint(state.view.getRoutingCenterX(target), state.view.getRoutingCenterY(target));
+		}
+
+		if (horizontal)
+		{
+			if (pt.y != hint.y && first.x != pt.x)
+			{
+				result.push(new mxPoint(pt.x, hint.y));
+			}
+		}
+		else if (pt.x != hint.x && first.y != pt.y)
+		{
+			result.push(new mxPoint(hint.x, pt.y));
+		}
+	};
+	
+	mxStyleRegistry.putValue('wireEdgeStyle', mxEdgeStyle.WireConnector);
+	
+	// This connector needs an mxEdgeSegmentHandler
+	mxGraphCreateHandler = mxGraph.prototype.createHandler;
+	mxGraph.prototype.createHandler = function(state)
+	{
+		var result = null;
+		
+		if (state != null)
+		{
+			if (this.model.isEdge(state.cell))
+			{
+				var style = this.view.getEdgeStyle(state);
+				
+				if (style == mxEdgeStyle.WireConnector)
+				{
+					return new mxEdgeSegmentHandler(state);
+				}
+			}
+		}
+		
+		return mxGraphCreateHandler.apply(this, arguments);
+	};
 	</script>
 
-	<script type="text/javascript">
-                function InductorShape() { };
-		InductorShape.prototype = new mxCylinder();
-		InductorShape.prototype.constructor = InductorShape;
-
-		InductorShape.prototype.redrawPath = function(path, x, y, w, h, isForeground)
-		{
-			var dx = w / 6;
-                        var dy = h / 6;
-
-			if (isForeground)
-			{
-				path.moveTo(0, h/2);
-				path.lineTo(dx, h/2);
-				path.lineTo(dx, h/2-dy);
-				path.curveTo(dx, h/2-dy, 1.5*dx, h/2-5*dy, 2*dx, h/2-dy);
-				path.curveTo(2*dx, h/2-dy, 2.5*dx, h/2-5*dy, 3*dx, h/2-dy);
-				path.curveTo(3*dx, h/2-dy, 3.5*dx, h/2-5*dy, 4*dx, h/2-dy);
-				path.curveTo(4*dx, h/2-dy, 4.5*dx, h/2-5*dy, 5*dx, h/2-dy);
-				path.lineTo(5*dx, h/2);
-				path.lineTo(w, h/2);
-
-				path.end();
-			}
-		};
-
-		mxCellRenderer.registerShape('inductor', InductorShape);
-	</script>
-
-	<script type ="text/javascript">
-                function VoltageShape() {};
-		VoltageShape.prototype = new mxCylinder();
-		VoltageShape.prototype.constructor = VoltageShape;
-
-		VoltageShape.prototype.redrawPath = function(path, x, y, w, h, isForeground)
-		{
-			var dx = w / 6;
-                        var dy = h / 6;
-
-			if (isForeground)
-			{
-				path.moveTo(0, h/2);
-				path.lineTo(dx, h/2);
-				path.lineTo(dx, h/2-dy);
-				path.curveTo(dx, h/2-dy, 1.5*dx, h/2-5*dy, 2*dx, h/2-dy);
-				path.curveTo(2*dx, h/2-dy, 2.5*dx, h/2-5*dy, 3*dx, h/2-dy);
-				path.curveTo(3*dx, h/2-dy, 3.5*dx, h/2-5*dy, 4*dx, h/2-dy);
-				path.curveTo(4*dx, h/2-dy, 4.5*dx, h/2-5*dy, 5*dx, h/2-dy);
-				path.lineTo(5*dx, h/2);
-				path.lineTo(w, h/2);
-
-				path.end();
-			}
-		};
-
-		mxCellRenderer.registerShape('inductor', InductorShape);
-
-        </script>
-                
-     
-		 
 </head>
 
 <!-- Page passes the container for the graph to the program -->
