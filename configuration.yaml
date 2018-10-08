@@ -10,5 +10,5 @@ superadmins:
 tasks_directory: Inginious
 use_minified_js: true
 plugins:
-  - plugin_module: "inginious-problems-demo"
+  - plugin_module: "inginious-problems-electrical"
   - plugin_module: "inginious-problems-blockly"

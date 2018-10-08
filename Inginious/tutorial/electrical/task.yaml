@@ -1,0 +1,22 @@
+accessible: true
+author: Arthurs
+context: "In this task, you will have to enjoy an electrical circuit."
+environment: default
+evaluate: best
+groups: false
+input_random: '0'
+limits:
+    memory: '100'
+    time: '30'
+    output: '2'
+name: Electrical exercice
+network_grading: false
+order: 0
+problems:
+    question1:
+        type: code
+stored_submissions: 0
+submission_limit:
+    amount: -1
+    period: -1
+weight: 1.0

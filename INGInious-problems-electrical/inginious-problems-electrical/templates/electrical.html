@@ -1,0 +1,486 @@
+$def with (inputId)
+
+$#
+$# This file is part of INGInious. See the LICENSE and the COPYRIGHTS files for
+$# more information about the licensing of this file.
+$#
+
+
+<div id="graphContainer"
+	style="position:relative;overflow:hidden;width:1440px;height:720px;background:url('editors/images/grid.gif');cursor:default;">
+</div>
+
+<script type="text/javascript">
+	// Program starts here. Creates a sample graph in the
+	// DOM node with the specified ID. This function is invoked
+	// from the onLoad event handler of the document (see below).
+	function main(container)
+	{
+		// Checks if the browser is supported
+		if (!mxClient.isBrowserSupported())
+		{
+			// Displays an error message if the browser is not supported.
+			mxUtils.error('Browser is not supported!', 200, false);
+		}
+		else
+		{
+			// Disables the built-in context menu
+			mxEvent.disableContextMenu(container);
+			
+			var doc = mxUtils.createXmlDocument();
+			var Resistor1 = doc.createElement('Res');
+			Resistor1.setAttribute('Name', 'R');
+			Resistor1.setAttribute('Value', 5);
+
+			// Creates the graph inside the given container
+			var graph = new mxGraph(container);
+			graph.setTooltips(true);
+			graph.htmlLabels = true;
+			graph.vertexLabelsMovable = false;
+			new mxKeyHandler(graph);
+            graph.setConnectable(true);
+		
+		    // Disables automatic handling of ports. This disables the reset of the
+		    // respective style in mxGraph.cellConnected. Note that this feature may
+		    // be useful if floating and fixed connections are combined.
+		    graph.setPortsEnabled(false);
+			
+            //Maximum size
+		    graph.maximumGraphBounds = new mxRectangle(0, 0, 1800, 1600)
+		    graph.border = 50;
+			var styleV = graph.getStylesheet().getDefaultVertexStyle();
+			styleV['movable'] = '1';
+			styleV['resizable'] = '1';
+			styleV[mxConstants.STYLE_STROKECOLOR] = '#000000';
+			styleV[mxConstants.STYLE_FILLCOLOR] = '#FFFF00';
+			var styleE = graph.getStylesheet().getDefaultEdgeStyle();
+			delete styleE['endArrow'];
+			styleE['movable'] = '1';
+			styleE['resizable'] = '0';
+			styleE['edgeStyle'] = 'wireEdgeStyle';
+			styleE['fontSize'] = '9';
+			styleE['movable'] = '0';
+			// Enables rubberband selection
+			new mxRubberband(graph);
+
+			// Overrides method to store a cell label in the model
+
+
+			// Overrides method to provide a cell label in the display
+			graph.convertValueToString = function(cell)
+			{
+				if (mxUtils.isNode(cell.value))
+				{
+					if (cell.value.nodeName.toLowerCase() == 'res')
+					{
+						var Name = cell.getAttribute('Name', '');
+						var Value = cell.getAttribute('Value', '');
+
+						if (Value != null && Value.length > 0)
+						{
+							return Value + ', ' + Name;
+						}
+
+						return Name;
+					}
+
+					else  {
+
+						return cell.value.nodeName.toLowerCase();
+					}
+					
+				}
+
+				return cell.value;
+			};
+			
+			// Do not allow removing labels from parents
+			graph.graphHandler.removeCellsFromParent = false;
+			
+			// Autosize labels on insert where autosize=1
+			graph.autoSizeCellsOnAdd = true;
+			
+			// Allows moving of relative cells
+			graph.isCellLocked = function(cell)
+			{
+				return this.isCellsLocked();
+			};
+			
+			graph.isCellResizable = function(cell)
+			{
+				var geo = this.model.getGeometry(cell);
+				
+				return geo == null || !geo.relative;
+			};
+			
+			// Truncates the label to the size of the vertex
+			graph.getLabel = function(cell)
+			{
+				var label = (this.labelsVisible) ? this.convertValueToString(cell) : '';
+				var geometry = this.model.getGeometry(cell);
+				
+				if (!this.model.isCollapsed(cell) && geometry != null && (geometry.offset == null ||
+					(geometry.offset.x == 0 && geometry.offset.y == 0)) && this.model.isVertex(cell) &&
+					geometry.width >= 2)
+				{
+					var style = this.getCellStyle(cell);
+					var fontSize = style[mxConstants.STYLE_FONTSIZE] || mxConstants.DEFAULT_FONTSIZE;
+					var max = geometry.width / (fontSize * 0.625);
+					
+					if (max < label.length)
+					{
+						return label.substring(0, max) + '...';
+					}
+				}
+				
+				return label;
+			};
+			
+			// Enables wrapping for vertex labels
+			graph.isWrapping = function(cell)
+			{
+				return this.model.isCollapsed(cell);
+			};
+			
+			// Enables clipping of vertex labels if no offset is defined
+			graph.isLabelClipped = function(cell)
+			{
+				var geometry = this.model.getGeometry(cell);
+				
+				return geometry != null && !geometry.relative && (geometry.offset == null ||
+					(geometry.offset.x == 0 && geometry.offset.y == 0));
+			};
+
+
+			var cellLabelChanged = graph.cellLabelChanged;
+			graph.cellLabelChanged = function(cell, newValue, autoSize)
+			{
+				if (mxUtils.isNode(cell.value) &&
+					cell.value.nodeName.toLowerCase() == 'res')
+				{
+					var pos = newValue.indexOf(' ');
+
+					var Name = (pos > 0) ? newValue.substring(0,
+							pos) : newValue;
+					var Value = (pos > 0) ? newValue.substring(
+							pos + 1, newValue.length) : '';
+
+					// Clones the value for correct undo/redo
+					var elt = cell.value.cloneNode(true);
+
+					elt.setAttribute('firstName', firstName);
+					elt.setAttribute('lastName', lastName);
+
+					newValue = elt;
+					autoSize = true;
+				}
+				
+				cellLabelChanged.apply(this, arguments);
+			};
+
+   
+
+            // Disables floating connections (only connections via ports allowed)
+		    graph.connectionHandler.isConnectableCell = function(cell)
+		    {
+		        return false;
+		    };
+		    mxEdgeHandler.prototype.isConnectableCell = function(cell)
+		    {
+			    return graph.connectionHandler.isConnectableCell(cell);
+		    };
+		
+		    // Disables existing port functionality
+		    graph.view.getTerminalPort = function(state, terminal, source)
+		    {
+			    return terminal;
+		    };
+
+            // Returns all possible ports for a given terminal
+		    graph.getAllConnectionConstraints = function(terminal, source)
+		    {
+			    if (terminal != null && terminal.shape != null &&
+				    terminal.shape.stencil != null)
+			    {
+				    // for stencils with existing constraints...
+				    if (terminal.shape.stencil != null)
+				    {
+					    return terminal.shape.stencil.constraints;
+				    }
+			    }
+			    else if (terminal != null && this.model.isVertex(terminal.cell))
+			    {
+				    if (terminal.shape != null)
+				    {
+					    var ports = terminal.shape.getPorts();
+					    var cstrs = new Array();
+					
+					    for (var id in ports)
+					    {
+						    var port = ports[id];
+						
+						    var cstr = new mxConnectionConstraint(new mxPoint(port.x, port.y), port.perimeter);
+						    cstr.id = id;
+						    cstrs.push(cstr);
+					    }
+					
+					    return cstrs;
+				    }
+			    }
+			
+			    return null;
+		    };
+		
+		    // Sets the port for the given connection
+		    graph.setConnectionConstraint = function(edge, terminal, source, constraint)
+		    {
+			    if (constraint != null)
+			    {
+				    var key = (source) ? mxConstants.STYLE_SOURCE_PORT : mxConstants.STYLE_TARGET_PORT;
+				
+				    if (constraint == null || constraint.id == null)
+				    {
+					    this.setCellStyles(key, null, [edge]);
+				    }
+				    else if (constraint.id != null)
+				    {
+					    this.setCellStyles(key, constraint.id, [edge]);
+				    }
+			    }
+		    };
+		
+		    // Returns the port for the given connection
+		    graph.getConnectionConstraint = function(edge, terminal, source)
+		    {
+			    var key = (source) ? mxConstants.STYLE_SOURCE_PORT : mxConstants.STYLE_TARGET_PORT;
+			    var id = edge.style[key];
+			
+			    if (id != null)
+			    {
+				    var c =  new mxConnectionConstraint(null, null);
+				    c.id = id;
+				
+				    return c;
+			    }
+			
+			    return null;
+		    };
+
+		    // Returns the actual point for a port by redirecting the constraint to the port
+		    graphGetConnectionPoint = graph.getConnectionPoint;
+		    graph.getConnectionPoint = function(vertex, constraint)
+		    {
+			    if (constraint.id != null && vertex != null && vertex.shape != null)
+			    {
+				    var port = vertex.shape.getPorts()[constraint.id];
+				
+				    if (port != null)
+				    {
+					    constraint = new mxConnectionConstraint(new mxPoint(port.x, port.y), port.perimeter);
+				    }
+			    }
+			
+			    return graphGetConnectionPoint.apply(this, arguments);
+		    };
+
+
+            // create ports
+            var portsH = new Array(); // horizontal ports
+            portsH['w'] = {x: 0, y: 0.5, perimeter: true, constraint: 'west'};
+	        portsH['e'] = {x: 1, y: 0.5, perimeter: true, constraint: 'east'};
+            ResistorShapeH.prototype.getPorts = function()
+	        {
+		        return portsH;
+	        };
+            CapacitorShapeH.prototype.getPorts = function()
+	        {
+		        return portsH;
+	        };
+            InductorShapeH.prototype.getPorts = function()
+	        {
+		        return portsH;
+	        };
+
+            var portsV = new Array(); // vertical ports
+            portsV['n'] = {x: 0.5, y: 0, perimeter: true, constraint: 'north'};
+	        portsV['s'] = {x: 0.5, y: 1, perimeter: true, constraint: 'south'};
+            ResistorShapeV.prototype.getPorts = function()
+	        {
+		        return portsV;
+	        };
+            CapacitorShapeV.prototype.getPorts = function()
+	        {
+		        return portsV;
+	        };
+            InductorShapeV.prototype.getPorts = function()
+	        {
+		        return portsV;
+	        };
+            VoltageShape.prototype.getPorts = function()
+	        {
+		        return portsV;
+	        };
+            
+			
+			// Gets the default parent for inserting new cells. This
+			// is normally the first child of the root (ie. layer 0).
+			var parent = graph.getDefaultParent();
+							
+			// Adds cells to the model in a single step
+			graph.getModel().beginUpdate();
+			try
+			{                   
+				var v1 = graph.insertVertex(parent, null, Resistor1, 100, 150, 80, 30, 'shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
+				var v2 = graph.insertVertex(parent, null, 'R2D2', 200, 80, 30, 80, 'shape=resistor vertical;labelPosition=left;align=right;');
+				var v3 = graph.insertVertex(parent, null, 'C', 100, 50, 80, 40, 'shape=capacitor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
+				//var labelV3 = graph.insertVertex(v3, null, '0.2', 0.5, 1.2, 0, 0, null, true);
+				var v4 = graph.insertVertex(parent, null, 'V1', 50, 100, 40, 40, 'shape=voltage;labelPosition=left;align=right;');
+				var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=e;entryPerimeter=0;targetPort=s');
+				var e1 = graph.insertEdge(parent, null, null, v3, v4, 'sourcePort=w;entryPerimeter=0;targetPort=n');
+				var e1 = graph.insertEdge(parent, null, null, v3, v2, 'sourcePort=e;entryPerimeter=0;targetPort=n');
+				var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=w;entryPerimeter=0;targetPort=s');
+				
+			}
+			finally
+			{
+				// Updates the display
+				graph.getModel().endUpdate();
+			}
+		}
+		var encoder = new mxCodec();
+		var node = encoder.encode(graph.getModel());
+		mxUtils.popup(mxUtils.getPrettyXml(node),true);
+	};
+	
+mxEdgeStyle.WireConnector = function(state, source, target, hints, result)
+{
+	// Creates array of all way- and terminalpoints
+	var pts = state.absolutePoints;
+	var horizontal = true;
+	var hint = null;
+	
+	// Gets the initial connection from the source terminal or edge
+	if (source != null && state.view.graph.model.isEdge(source.cell))
+	{
+		horizontal = state.style['sourceConstraint'] == 'horizontal';
+	}
+	else if (source != null)
+	{
+		horizontal = source.style['portConstraint'] != 'vertical';
+		
+		// Checks the direction of the shape and rotates
+		var direction = source.style[mxConstants.STYLE_DIRECTION];
+		
+		if (direction == 'north' || direction == 'south')
+		{
+			horizontal = !horizontal;
+		}
+	}
+	
+	// Adds the first point
+	// TODO: Should move along connected segment
+	var pt = pts[0];
+	
+	if (pt == null && source != null)
+	{
+		pt = new mxPoint(state.view.getRoutingCenterX(source), state.view.getRoutingCenterY(source));
+	}
+	else if (pt != null)
+	{
+		pt = pt.clone();
+	}
+	
+	var first = pt;
+
+	// Adds the waypoints
+	if (hints != null && hints.length > 0)
+	{
+		// FIXME: First segment not movable
+		/*hint = state.view.transformControlPoint(state, hints[0]);
+		mxLog.show();
+		mxLog.debug(hints.length,'hints0.y='+hint.y, pt.y)
+		
+		if (horizontal && Math.floor(hint.y) != Math.floor(pt.y))
+		{
+			mxLog.show();
+			mxLog.debug('add waypoint');
+
+			pt = new mxPoint(pt.x, hint.y);
+			result.push(pt);
+			pt = pt.clone();
+			//horizontal = !horizontal;
+		}*/
+		
+		for (var i = 0; i < hints.length; i++)
+		{
+			horizontal = !horizontal;
+			hint = state.view.transformControlPoint(state, hints[i]);
+
+			if (horizontal)
+			{
+				if (pt.y != hint.y)
+				{
+					pt.y = hint.y;
+					result.push(pt.clone());
+				}
+			}
+			else if (pt.x != hint.x)
+			{
+				pt.x = hint.x;
+				result.push(pt.clone());
+			}
+		}
+	}
+	else
+	{
+		hint = pt;
+	}
+
+	// Adds the last point
+	pt = pts[pts.length - 1];
+
+	// TODO: Should move along connected segment
+	if (pt == null && target != null)
+	{
+		pt = new mxPoint(state.view.getRoutingCenterX(target), state.view.getRoutingCenterY(target));
+	}
+
+	if (horizontal)
+	{
+		if (pt.y != hint.y && first.x != pt.x)
+		{
+			result.push(new mxPoint(pt.x, hint.y));
+		}
+	}
+	else if (pt.x != hint.x && first.y != pt.y)
+	{
+		result.push(new mxPoint(hint.x, pt.y));
+	}
+};
+
+mxStyleRegistry.putValue('wireEdgeStyle', mxEdgeStyle.WireConnector);
+
+// This connector needs an mxEdgeSegmentHandler
+mxGraphCreateHandler = mxGraph.prototype.createHandler;
+mxGraph.prototype.createHandler = function(state)
+{
+	var result = null;
+	
+	if (state != null)
+	{
+		if (this.model.isEdge(state.cell))
+		{
+			var style = this.view.getEdgeStyle(state);
+			
+			if (style == mxEdgeStyle.WireConnector)
+			{
+				return new mxEdgeSegmentHandler(state);
+			}
+		}
+	}
+	
+	return mxGraphCreateHandler.apply(this, arguments);
+};
+</script>
+
+<input type="hidden" name="$inputId" value="" class="monospace form-control"/>
