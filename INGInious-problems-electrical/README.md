@@ -1,14 +1,14 @@
-# INGInious-problems-demo
+# INGInious-problems-electrical
 
-Basic additional INGInious problem example.
+Add INGInious electrical problem.
 
 ## Installing
 
-    pip3 install git+https://github.com/UCL-INGI/INGInious-problems-demo
+    pip3 install INGInious-problem-electrical
 
 ## Activating
 
 In your ``configuration.yaml`` file, add the following plugin entry:
 
     plugins:
-      - plugin_module: "inginious-problems-demo"
+      - plugin_module: "inginious-problems-electrical"
