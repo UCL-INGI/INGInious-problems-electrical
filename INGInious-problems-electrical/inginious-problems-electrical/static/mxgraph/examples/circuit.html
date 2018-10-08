@@ -288,12 +288,7 @@
 				}
 			}
 		};
-	</script>
-
-   
-
-
-	<script type="text/javascript">
+		
 	mxEdgeStyle.WireConnector = function(state, source, target, hints, result)
 	{
 		// Creates array of all way- and terminalpoints
@@ -422,6 +417,15 @@
 		}
 		
 		return mxGraphCreateHandler.apply(this, arguments);
+	};
+	
+	function read(graph, filename)
+	{
+		var req = mxUtils.load(filename);
+		var root = req.getDocumentElement();
+		var dec = new mxCodec(root.ownerDocument);
+		
+		dec.decode(root, graph.getModel());
 	};
 	</script>
 

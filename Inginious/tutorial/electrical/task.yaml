@@ -6,15 +6,18 @@ evaluate: best
 groups: false
 input_random: '0'
 limits:
-    time: '30'
     output: '2'
+    time: '30'
     memory: '100'
 name: Electrical exercice
 network_grading: false
 order: 0
 problems:
     question1:
+        answer: ''
         type: electrical
+        header: ''
+        name: ''
 stored_submissions: 0
 submission_limit:
     amount: -1

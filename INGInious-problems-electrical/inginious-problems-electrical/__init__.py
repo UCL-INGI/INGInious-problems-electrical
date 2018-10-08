@@ -100,5 +100,4 @@ def init(plugin_manager, course_factory, client, plugin_config):
     plugin_manager.add_page('/plugins/electrical/static/(.+)', StaticMockPage)
     plugin_manager.add_hook("javascript_header", lambda: "/plugins/electrical/static/mxgraph/mxClient.min.js")
     plugin_manager.add_hook("javascript_header", lambda: "/plugins/electrical/static/mxgraph/src/js/eleccomponent.js")
-    plugin_manager.add_hook("txt", lambda: "/course/tutorial/resources/editor_fr.txt")
     course_factory.get_task_factory().add_problem_type(DisplayableElectricalProblem)
