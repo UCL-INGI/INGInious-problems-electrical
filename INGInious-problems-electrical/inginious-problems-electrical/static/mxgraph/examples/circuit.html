@@ -8,6 +8,11 @@
 <head>
 	<title>MDR</title>
 
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript">
+		mxBasePath = '../src';
+	</script>
+
 	<!-- Loads and initializes the library -->
 	<script type="text/javascript" src="../src/js/mxClient.js"></script>
     <script type="text/javascript" src="../src/js/eleccomponent.js"></script>
@@ -30,13 +35,116 @@
 				mxEvent.disableContextMenu(container);
 				
 				var doc = mxUtils.createXmlDocument();
-				var Resistor1 = doc.createElement('Res');
-				Resistor1.setAttribute('Name', 'lol');
-				Resistor1.setAttribute('Value', 5);
+				
+				var R1 = doc.createElement('Component');
+				R1.setAttribute('name', 'R1');
+				R1.setAttribute('value', '5');
+				var R2 = doc.createElement('Component');
+				R2.setAttribute('name', 'R2D2');
+				R2.setAttribute('value', '4');
+				var C = doc.createElement('Component');
+				C.setAttribute('name', 'Kappa');
+				C.setAttribute('value', '0.5');
+				var V = doc.createElement('Component');
+				V.setAttribute('name', 'V');
+				V.setAttribute('value', '10');
+
 
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
                 graph.setConnectable(true);
+                new mxKeyHandler(graph);
+                
+                // Adds an option to view the XML of the graph
+				document.body.appendChild(mxUtils.button('View XML', function()
+				{
+					var encoder = new mxCodec();
+					var node = encoder.encode(graph.getModel());
+					mxUtils.popup(mxUtils.getPrettyXml(node), true);
+				}));
+                
+                // Overrides method to disallow edge label editing
+				graph.isCellEditable = function(cell)
+				{
+					return !this.getModel().isEdge(cell);
+				};
+				
+				// Overrides method to provide a cell label in the display
+				graph.convertValueToString = function(cell)
+				{
+					if (mxUtils.isNode(cell.value))
+					{
+						if (cell.value.nodeName.toLowerCase() == 'component')
+						{
+							var name = cell.getAttribute('name', '');
+							var value = cell.getAttribute('value', '');
+
+							return name + ' ' + value;
+						}
+
+					}
+
+					return '';
+				};
+
+				// Overrides method to store a cell label in the model
+				var cellLabelChanged = graph.cellLabelChanged;
+				graph.cellLabelChanged = function(cell, newValue, autoSize)
+				{
+					if (mxUtils.isNode(cell.value) &&
+						cell.value.nodeName.toLowerCase() == 'component')
+					{
+						var pos = newValue.indexOf(' ');
+
+						var name = (pos > 0) ? newValue.substring(0,
+								pos) : newValue;
+						var value = (pos > 0) ? newValue.substring(
+								pos + 1, newValue.length) : '';
+
+						// Clones the value for correct undo/redo
+						var elt = cell.value.cloneNode(true);
+
+						elt.setAttribute('name', name);
+						elt.setAttribute('value', value);
+
+						newValue = elt;
+						autoSize = false;
+					}
+					
+					cellLabelChanged.apply(this, arguments);
+				};
+				
+				// Overrides method to create the editing value
+				var getEditingValue = graph.getEditingValue;
+				graph.getEditingValue = function(cell)
+				{
+					if (mxUtils.isNode(cell.value) &&
+						cell.value.nodeName.toLowerCase() == 'component')
+					{
+						var name = cell.getAttribute('name', '');
+						var value = cell.getAttribute('value', '');
+
+						return name + ' ' + value;
+					}
+				};
+
+				// Adds a special tooltip for edges
+				graph.setTooltips(true);
+				
+				var getTooltipForCell = graph.getTooltipForCell;
+				graph.getTooltipForCell = function(cell)
+				{
+					// Adds some relation details for edges
+					if (graph.getModel().isEdge(cell))
+					{
+						var src = this.getLabel(this.getModel().getTerminal(cell, true));
+						var trg = this.getLabel(this.getModel().getTerminal(cell, false));
+
+						return src + ' ' + cell.value.nodeName + ' ' +  trg;
+					}
+
+					return getTooltipForCell.apply(this, arguments);
+				};
 			
 			    // Disables automatic handling of ports. This disables the reset of the
 			    // respective style in mxGraph.cellConnected. Note that this feature may
@@ -60,66 +168,7 @@
 				styleE['movable'] = '0';
 				// Enables rubberband selection
 				new mxRubberband(graph);
-
-				// Overrides method to store a cell label in the model
-
-
-				// Overrides method to provide a cell label in the display
-				graph.convertValueToString = function(cell)
-				{
-					if (mxUtils.isNode(cell.value))
-					{
-						if (cell.value.nodeName.toLowerCase() == 'res')
-						{
-							var Name = cell.getAttribute('Name', '');
-							var Value = cell.getAttribute('Value', '');
-
-							if (Value != null && Value.length > 0)
-							{
-								return Value + ', ' + Name;
-							}
-
-							return Name;
-						}
-
-						else  {
-
-							return cell.value.nodeName.toLowerCase();
-						}
-						
-					}
-
-					return cell.value;
-				};
-
-
-				var cellLabelChanged = graph.cellLabelChanged;
-				graph.cellLabelChanged = function(cell, newValue, autoSize)
-				{
-					if (mxUtils.isNode(cell.value) &&
-						cell.value.nodeName.toLowerCase() == 'res')
-					{
-						var pos = newValue.indexOf(' ');
-
-						var Name = (pos > 0) ? newValue.substring(0,
-								pos) : newValue;
-						var Value = (pos > 0) ? newValue.substring(
-								pos + 1, newValue.length) : '';
-
-						// Clones the value for correct undo/redo
-						var elt = cell.value.cloneNode(true);
-
-						elt.setAttribute('firstName', firstName);
-						elt.setAttribute('lastName', lastName);
-
-						newValue = elt;
-						autoSize = true;
-					}
-					
-					cellLabelChanged.apply(this, arguments);
-				};
-
-       
+				       
 
                 // Disables floating connections (only connections via ports allowed)
 			    graph.connectionHandler.isConnectableCell = function(cell)
@@ -271,10 +320,10 @@
 				graph.getModel().beginUpdate();
 				try
 				{                   
-					var v1 = graph.insertVertex(parent, null, Resistor1, 100, 150, 80, 30, 'shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v2 = graph.insertVertex(parent, null, 'R2D2', 200, 80, 30, 80, 'shape=resistor vertical;labelPosition=left;align=right;');
-					var v3 = graph.insertVertex(parent, null, 'Kappa', 100, 50, 80, 40, 'shape=capacitor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v4 = graph.insertVertex(parent, null, 'V1', 50, 100, 40, 40, 'shape=voltage;labelPosition=left;align=right;');
+					var v1 = graph.insertVertex(parent, null, R1, 100, 150, 80, 30, 'shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v2 = graph.insertVertex(parent, null, R2, 200, 80, 30, 80, 'shape=resistor vertical;labelPosition=left;align=right;');
+					var v3 = graph.insertVertex(parent, null, C, 100, 50, 80, 40, 'shape=capacitor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v4 = graph.insertVertex(parent, null, V, 50, 100, 40, 40, 'shape=voltage;labelPosition=left;align=right;');
 					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=e;entryPerimeter=0;targetPort=s');
 					var e1 = graph.insertEdge(parent, null, null, v3, v4, 'sourcePort=w;entryPerimeter=0;targetPort=n');
 					var e1 = graph.insertEdge(parent, null, null, v3, v2, 'sourcePort=e;entryPerimeter=0;targetPort=n');
@@ -285,6 +334,109 @@
 				{
 					// Updates the display
 					graph.getModel().endUpdate();
+				}
+			// Implements a properties panel that uses
+				// mxCellAttributeChange to change properties
+				graph.getSelectionModel().addListener(mxEvent.CHANGE, function(sender, evt)
+				{
+					selectionChanged(graph);
+				});
+
+				selectionChanged(graph);
+			}
+
+			/**
+			 * Updates the properties panel
+			 */
+			function selectionChanged(graph)
+			{
+				var div = document.getElementById('properties');
+
+				// Forces focusout in IE
+				graph.container.focus();
+
+				// Clears the DIV the non-DOM way
+				div.innerHTML = '';
+
+				// Gets the selection cell
+				var cell = graph.getSelectionCell();
+
+				if (cell != null)
+				{
+					// Writes the title
+					var center = document.createElement('center');
+					mxUtils.writeln(center, 'Editing ' + cell.getAttribute('name'));
+					div.appendChild(center);
+					mxUtils.br(div);
+
+					// Creates the form from the attributes of the user object
+					var form = new mxForm();
+	
+					var attrs = cell.value.attributes;
+					
+					for (var i = 0; i < attrs.length; i++)
+					{
+						createTextField(graph, form, cell, attrs[i]);
+					}
+	
+					div.appendChild(form.getTable());
+					mxUtils.br(div);
+				}
+			}
+
+			/**
+			 * Creates the textfield for the given property.
+			 */
+			function createTextField(graph, form, cell, attribute)
+			{
+				var input = form.addText(attribute.nodeName + ':', attribute.nodeValue);
+
+				var applyHandler = function()
+				{
+					var newValue = input.value || '';
+					var oldValue = cell.getAttribute(attribute.nodeName, '');
+
+					if (newValue != oldValue)
+					{
+						graph.getModel().beginUpdate();
+                        
+                        try
+                        {
+                        	var edit = new mxCellAttributeChange(
+ 		                           cell, attribute.nodeName,
+ 		                           newValue);
+                           	graph.getModel().execute(edit);
+                        }
+                        finally
+                        {
+                            graph.getModel().endUpdate();
+                        }
+					}
+				}; 
+
+				mxEvent.addListener(input, 'keypress', function (evt)
+				{
+					// Needs to take shift into account for textareas
+					if (evt.keyCode == /*enter*/13 &&
+						!mxEvent.isShiftDown(evt))
+					{
+						input.blur();
+					}
+				});
+
+				if (mxClient.IS_IE)
+				{
+					mxEvent.addListener(input, 'focusout', applyHandler);
+				}
+				else
+				{
+					// Note: Known problem is the blurring of fields in
+					// Firefox by changing the selection, in which case
+					// no event is fired in FF and the change is lost.
+					// As a workaround you should use a local variable
+					// that stores the focused field and invoke blur
+					// explicitely where we do the graph.focus above.
+					mxEvent.addListener(input, 'blur', applyHandler);
 				}
 			}
 		};
@@ -427,16 +579,26 @@
 		
 		dec.decode(root, graph.getModel());
 	};
+	
 	</script>
 
 </head>
 
 <!-- Page passes the container for the graph to the program -->
 <body onload="main(document.getElementById('graphContainer'))">
-
-	<!-- Creates a container for the graph with a grid wallpaper -->
-	<div id="graphContainer"
-		style="position:relative;overflow:hidden;width:1440px;height:720px;cursor:default;">
-	</div>
+	<table style="position:relative;">
+	<tr>
+		<td>
+			<div id="graphContainer"
+				style="overflow:hidden;width:321px;height:241px;cursor:default;">
+			</div>
+		</td>
+		<td valign="top">
+			<div id="properties"
+				style="padding: 10px;">
+			</div>
+		</td>
+	</tr>
+	</table>
 </body>
 </html>

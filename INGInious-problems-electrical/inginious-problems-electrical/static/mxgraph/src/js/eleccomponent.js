@@ -1,6 +1,7 @@
 function VoltageShape() {};
 		VoltageShape.prototype = new mxCylinder();
 		VoltageShape.prototype.constructor = VoltageShape;
+		VoltageShape.prototype.shapePointerEvents = true;
 		VoltageShape.prototype.redrawPath = function(path, x, y, w, h, isForeground)
 		{
 			var dx = w / 6;
@@ -46,6 +47,7 @@ function VoltageShape() {};
 function InductorShapeH() { };
 		InductorShapeH.prototype = new mxCylinder();
 		InductorShapeH.prototype.constructor = InductorShapeH;
+		InductorShapeH.prototype.shapePointerEvents = true;
 		InductorShapeH.prototype.redrawPath = function(path, x, y, w, h, isForeground)
 		{
 			var dx = w / 6;
@@ -69,6 +71,7 @@ function InductorShapeH() { };
 function InductorShapeV() { };
 		InductorShapeV.prototype = new mxCylinder();
 		InductorShapeV.prototype.constructor = InductorShapeV;
+		InductorShapeV.prototype.shapePointerEvents = true;
 		InductorShapeV.prototype.redrawPath = function(path, x, y, w, h, isForeground)
 		{
 			var dx = w / 6;
@@ -92,6 +95,7 @@ function InductorShapeV() { };
 function CapacitorShapeH() { };
 		CapacitorShapeH.prototype = new mxCylinder();
 		CapacitorShapeH.prototype.constructor = CapacitorShapeH;
+		CapacitorShapeH.prototype.shapePointerEvents = true;
 		CapacitorShapeH.prototype.redrawPath = function(path, x, y, w, h, isForeground)
 		{
 			var dx = w / 16;
@@ -113,6 +117,7 @@ function CapacitorShapeH() { };
 function CapacitorShapeV() { };
 		CapacitorShapeV.prototype = new mxCylinder();
 		CapacitorShapeV.prototype.constructor = CapacitorShapeV;
+		CapacitorShapeV.prototype.shapePointerEvents = true;
 		CapacitorShapeV.prototype.redrawPath = function(path, x, y, w, h, isForeground)
 		{
 			var dy = h / 16;
@@ -135,6 +140,7 @@ function ResistorShapeH() { };
         
 		ResistorShapeH.prototype = new mxCylinder();
 		ResistorShapeH.prototype.constructor = ResistorShapeH;
+		ResistorShapeH.prototype.shapePointerEvents = true;
 		ResistorShapeH.prototype.redrawPath = function(path, x, y, w, h, isForeground)
 		{
 			var dx = w / 16;
@@ -155,12 +161,14 @@ function ResistorShapeH() { };
                 path.stroke();
 			}
 		};
+		
 		mxCellRenderer.registerShape('resistor horizontal', ResistorShapeH);
 
 function ResistorShapeV() { };      
         
 		ResistorShapeV.prototype = new mxCylinder();
 		ResistorShapeV.prototype.constructor = ResistorShapeV;
+		ResistorShapeV.prototype.shapePointerEvents = true;
 		ResistorShapeV.prototype.redrawPath = function(path, x, y, w, h, isForeground)
 		{
 			var dy = h / 16;
