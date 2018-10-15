@@ -1,0 +1,6 @@
+ngspice circuit.net
+
+run
+
+print V(n001)
+print V(n001) > output.txt

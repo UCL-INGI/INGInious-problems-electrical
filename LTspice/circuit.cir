@@ -1,8 +1,0 @@
-* gegography
-R1 N002 0 10
-R2 N003 0 5
-V1 N001 N003 10
-C1 N001 N002 0.2
-.op
-.backanno
-.end

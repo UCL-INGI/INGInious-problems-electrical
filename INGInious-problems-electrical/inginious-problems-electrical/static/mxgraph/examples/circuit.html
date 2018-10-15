@@ -49,8 +49,6 @@
 				V.setAttribute('name', 'V');
 				V.setAttribute('value', '10');
 				var G = doc.createElement('Ground');
-				G.setAttribute('name', '');
-				G.setAttribute('value', '');
 				
 
 
@@ -130,24 +128,6 @@
 
 						return name + ' ' + value;
 					}
-				};
-
-				// Adds a special tooltip for edges
-				graph.setTooltips(true);
-				
-				var getTooltipForCell = graph.getTooltipForCell;
-				graph.getTooltipForCell = function(cell)
-				{
-					// Adds some relation details for edges
-					if (graph.getModel().isEdge(cell))
-					{
-						var src = this.getLabel(this.getModel().getTerminal(cell, true));
-						var trg = this.getLabel(this.getModel().getTerminal(cell, false));
-
-						return src + ' ' + cell.value.nodeName + ' ' +  trg;
-					}
-
-					return getTooltipForCell.apply(this, arguments);
 				};
 			
 			    // Disables automatic handling of ports. This disables the reset of the
@@ -334,7 +314,7 @@
 					var v2 = graph.insertVertex(parent, null, R2, 200, 80, 30, 80, 'shape=resistor vertical;labelPosition=left;align=right;');
 					var v3 = graph.insertVertex(parent, null, C, 100, 50, 80, 40, 'shape=capacitor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
 					var v4 = graph.insertVertex(parent, null, V, 50, 100, 40, 40, 'shape=voltage;labelPosition=left;align=right;');
-					var v5 = graph.insertVertex(parent, null, G, 200, 50, 40, 20, 'shape=ground;labelPosition=left;align=right;');
+					var v5 = graph.insertVertex(parent, null, G, 160, 200, 40, 20, 'shape=ground;labelPosition=left;align=right;');
 					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=e;entryPerimeter=0;targetPort=s');
 					var e2 = graph.insertEdge(parent, null, null, v3, v4, 'sourcePort=w;entryPerimeter=0;targetPort=n');
 					var e3 = graph.insertEdge(parent, null, null, v3, v2, 'sourcePort=e;entryPerimeter=0;targetPort=n');
@@ -347,7 +327,7 @@
 					// Updates the display
 					graph.getModel().endUpdate();
 				}
-			// Implements a properties panel that uses
+			    // Implements a properties panel that uses
 				// mxCellAttributeChange to change properties
 				graph.getSelectionModel().addListener(mxEvent.CHANGE, function(sender, evt)
 				{
@@ -373,7 +353,7 @@
 				// Gets the selection cell
 				var cell = graph.getSelectionCell();
 
-				if (cell != null)
+				if (cell != null && cell.value.nodeName.toLowerCase() == 'component')
 				{
 					// Writes the title
 					var center = document.createElement('center');

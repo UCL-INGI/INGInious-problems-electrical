@@ -1,11 +1,10 @@
-#!/usr/bin/python3
+#!/bin/bash
 
-getinput "thecode" > student/student_code.py
-output=$(python3 student/student_code.py)
+ngspice circuit.net
 
-if [ "$output" = "Hello World!" ]; then
-    feedback-result success
-else
-    feedback-result failed
-    feedback-msg -em "Your program displayed : $output"
-fi
+run
+
+print V(n001)
+
+
+#feedback-result success
