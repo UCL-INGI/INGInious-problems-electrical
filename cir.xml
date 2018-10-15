@@ -1,0 +1,32 @@
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <Res Name="lol" Value="5" id="2">
+      <mxCell style="shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
+        <mxGeometry x="100" y="150" width="80" height="30" as="geometry"/>
+      </mxCell>
+    </Res>
+    <mxCell id="3" value="R2D2" style="shape=resistor vertical;labelPosition=left;align=right;" vertex="1" parent="1">
+      <mxGeometry x="200" y="80" width="30" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="4" value="Kappa" style="shape=capacitor horizontal;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
+      <mxGeometry x="100" y="50" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="5" value="V1" style="shape=voltage;labelPosition=left;align=right;" vertex="1" parent="1">
+      <mxGeometry x="50" y="100" width="40" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="6" style="sourcePort=e;entryPerimeter=0;targetPort=s" edge="1" parent="1" source="2" target="3">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="7" style="sourcePort=w;entryPerimeter=0;targetPort=n" edge="1" parent="1" source="4" target="5">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="8" style="sourcePort=e;entryPerimeter=0;targetPort=n" edge="1" parent="1" source="4" target="3">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="9" style="sourcePort=w;entryPerimeter=0;targetPort=s" edge="1" parent="1" source="2" target="5">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>
