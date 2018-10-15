@@ -48,6 +48,10 @@
 				var V = doc.createElement('Component');
 				V.setAttribute('name', 'V');
 				V.setAttribute('value', '10');
+				var G = doc.createElement('Ground');
+				G.setAttribute('name', '');
+				G.setAttribute('value', '');
+				
 
 
 				// Creates the graph inside the given container
@@ -310,6 +314,12 @@
 		        {
 			        return portsV;
 		        };
+		        var portsG = new Array(); // ground port
+		        portsG['n'] = {x: 0.5, y: 0, perimeter: true, constraint: 'north'};
+		        GroundShape.prototype.getPorts = function()
+		        {
+		        	return portsG;
+		        };
                 
 				
 				// Gets the default parent for inserting new cells. This
@@ -324,10 +334,12 @@
 					var v2 = graph.insertVertex(parent, null, R2, 200, 80, 30, 80, 'shape=resistor vertical;labelPosition=left;align=right;');
 					var v3 = graph.insertVertex(parent, null, C, 100, 50, 80, 40, 'shape=capacitor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
 					var v4 = graph.insertVertex(parent, null, V, 50, 100, 40, 40, 'shape=voltage;labelPosition=left;align=right;');
+					var v5 = graph.insertVertex(parent, null, G, 200, 50, 40, 20, 'shape=ground;labelPosition=left;align=right;');
 					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=e;entryPerimeter=0;targetPort=s');
-					var e1 = graph.insertEdge(parent, null, null, v3, v4, 'sourcePort=w;entryPerimeter=0;targetPort=n');
-					var e1 = graph.insertEdge(parent, null, null, v3, v2, 'sourcePort=e;entryPerimeter=0;targetPort=n');
-					var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=w;entryPerimeter=0;targetPort=s');
+					var e2 = graph.insertEdge(parent, null, null, v3, v4, 'sourcePort=w;entryPerimeter=0;targetPort=n');
+					var e3 = graph.insertEdge(parent, null, null, v3, v2, 'sourcePort=e;entryPerimeter=0;targetPort=n');
+					var e4 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=w;entryPerimeter=0;targetPort=s');
+					var e5 = graph.insertEdge(parent, null, null, v5, v1, 'sourcePort=n;entryPerimeter=0;targetPort=e');
 					
 				}
 				finally

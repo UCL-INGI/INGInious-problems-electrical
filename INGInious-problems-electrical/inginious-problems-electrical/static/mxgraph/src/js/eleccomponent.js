@@ -188,3 +188,21 @@ function ResistorShapeV() { };
 			}
 		};
 		mxCellRenderer.registerShape('resistor vertical', ResistorShapeV);
+
+function GroundShape() { };
+		
+		GroundShape.prototype = new mxCylinder();
+		GroundShape.prototype.constructor = GroundShape;
+		GroundShape.prototype.shapePointerEvents = true;
+		GroundShape.prototype.redrawPath = function(path, x, y, w, h, isForeground)
+		{
+			if(isForeground)
+			{
+				path.moveTo(0, 0);
+				path.lineTo(w/2, h);
+				path.lineTo(w, 0);
+				path.lineTo(0, 0);
+				path.end();
+			}
+		};
+		mxCellRenderer.registerShape('ground', GroundShape);
