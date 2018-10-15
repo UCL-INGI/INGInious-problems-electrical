@@ -22,11 +22,11 @@
         <mxGeometry x="50" y="100" width="40" height="40" as="geometry"/>
       </mxCell>
     </Component>
-    <Component name="R3" value="5" id="6">
-      <mxCell style="shape=resistor horizontal;labelPosition=left;align=right;" vertex="1" parent="1">
-        <mxGeometry x="100" y="190" width="80" height="30" as="geometry"/>
+    <Ground name="" value="" id="6">
+      <mxCell style="shape=ground;labelPosition=left;align=right;" vertex="1" parent="1">
+        <mxGeometry x="180" y="200" width="40" height="20" as="geometry"/>
       </mxCell>
-    </Component>
+    </Ground>
     <mxCell id="7" style="sourcePort=e;entryPerimeter=0;targetPort=s" edge="1" parent="1" source="2" target="3">
       <mxGeometry relative="1" as="geometry"/>
     </mxCell>
@@ -39,10 +39,7 @@
     <mxCell id="10" style="sourcePort=w;entryPerimeter=0;targetPort=s" edge="1" parent="1" source="2" target="5">
       <mxGeometry relative="1" as="geometry"/>
     </mxCell>
-    <mxCell id="11" style="sourcePort=e;entryPerimeter=0;targetPort=e" edge="1" parent="1" source="6" target="2">
-      <mxGeometry relative="1" as="geometry"/>
-    </mxCell>
-    <mxCell id="12" style="sourcePort=w;entryPerimeter=0;targetPort=w" edge="1" parent="1" source="6" target="2">
+    <mxCell id="11" style="sourcePort=n;entryPerimeter=0;targetPort=e" edge="1" parent="1" source="6" target="2">
       <mxGeometry relative="1" as="geometry"/>
     </mxCell>
   </root>

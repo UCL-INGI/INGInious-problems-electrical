@@ -47,15 +47,23 @@ for node in listNode:
 		new_n.append(n[0])
 	list_n.append(new_n)
 
+ground = root.find('Ground')
+ground_id = ground.attrib.get('id')
+
 for child in root.findall('Component'):
 	my_file.write('%s' % (child.attrib.get('name')))
 	for node in list_n:
 		if child.attrib.get('id') in node:
+			if ground_id in node:
+				my_file.write(' 0')
+			else:
 				my_file.write( ' w%s' % (cnt))
 		cnt = cnt + 1
 
 	my_file.write(' %s\n' % (child.attrib.get('value')))
 
 	cnt = 0
+
+
 
 my_file.close()

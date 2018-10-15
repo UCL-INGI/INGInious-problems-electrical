@@ -1,6 +1,6 @@
 Spice circuit Gen
 
-R1 w23 w25 5
-R2D2 w23 w34 4
-Kappa w45 w34 0.5
-V w45 w25 10
+R1 0 w3 5
+R2D2 0 w2 4
+Kappa w1 w2 0.5
+V w1 w3 10
