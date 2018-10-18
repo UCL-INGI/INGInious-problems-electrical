@@ -50,6 +50,7 @@ for node in listNode:
 ground = root.find('Ground')
 ground_id = ground.attrib.get('id')
 
+
 for child in root.findall('Component'):
 	my_file.write('%s' % (child.attrib.get('name')))
 	for node in list_n:
@@ -58,12 +59,31 @@ for child in root.findall('Component'):
 				my_file.write(' 0')
 			else:
 				my_file.write( ' w%s' % (cnt))
-		cnt = cnt + 1
+		if ground_id not in node:
+			cnt = cnt + 1
 
 	my_file.write(' %s\n' % (child.attrib.get('value')))
 
 	cnt = 0
 
+my_file.write(".options savecurrents\n\n")
+my_file.write(".control\n")
+my_file.write("op\n")
+
+for i in range(len(list_n) - 1):
+	my_file.write('print V(w%s)\n' % (i))
+
+
+
+for child in root.findall('Component'):
+	if child.attrib.get('type') == 'Resistor':
+		my_file.write("print @%s[i]\n" % (child.attrib.get('name')))
+	if child.attrib.get('type') == 'Voltage':
+		my_file.write("print I(%s)\n" % (child.attrib.get('name')))
+
+my_file.write("exit\n")
+my_file.write(".endc\n")
+my_file.write(".end\n")
 
 
 my_file.close()

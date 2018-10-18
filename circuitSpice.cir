@@ -1,6 +1,14 @@
 Spice circuit Gen
 
-R1 0 w3 5
-R2D2 0 w2 4
-Kappa w1 w2 0.5
-V w1 w3 10
+R1 w0 0 5
+V w0 0 10
+.options savecurrents
+
+.control
+op
+print V(w0)
+print @R1[i]
+print I(V)
+exit
+.endc
+.end
