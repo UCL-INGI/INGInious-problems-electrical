@@ -1,6 +1,7 @@
 #!/bin/bash
 
-ngspice circuit.net > result.txt
+python3 parser_xml.py
+ngspice circuitSpice.cir > result.txt
 
 output=$(python3 parser_ngspice.py)
 if [ "$output" = "True" ]; then

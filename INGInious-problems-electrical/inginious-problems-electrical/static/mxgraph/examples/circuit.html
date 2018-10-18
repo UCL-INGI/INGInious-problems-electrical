@@ -157,7 +157,7 @@
 				// Enables rubberband selection
 				new mxRubberband(graph);
 				       
-
+				
                 // Disables floating connections (only connections via ports allowed)
 			    graph.connectionHandler.isConnectableCell = function(cell)
 			    {
@@ -167,7 +167,7 @@
 			    {
 				    return graph.connectionHandler.isConnectableCell(cell);
 			    };
-			
+				
 			    // Disables existing port functionality
 			    graph.view.getTerminalPort = function(state, terminal, source)
 			    {
@@ -278,7 +278,7 @@
 		        {
 			        return portsH;
 		        };
-
+				
                 var portsV = new Array(); // vertical ports
                 portsV['n'] = {x: 0.5, y: 0, perimeter: true, constraint: 'north'};
 		        portsV['s'] = {x: 0.5, y: 1, perimeter: true, constraint: 'south'};
@@ -314,13 +314,28 @@
 				graph.getModel().beginUpdate();
 				try
 				{                   
+
+					var req = mxUtils.load('stencils/resistor.xml');
+					var root = req.getDocumentElement();
+					var shape = root.firstChild;
+					
+					while (shape != null)
+					{
+						if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
+						{
+							mxStencilRegistry.addStencil(shape.getAttribute('name'), new mxStencil(shape));
+						}
+					
+						shape = shape.nextSibling;
+					}
+
+
+
 					// TODO : v1 v4 ou v4 v1 change la courbure des edges
-					var v1 = graph.insertVertex(parent, null, R1, 160, 80, 30, 80, 'shape=resistor vertical;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v4 = graph.insertVertex(parent, null, V, 50, 100, 40, 40, 'shape=voltage;labelPosition=left;align=right;');
-					var v5 = graph.insertVertex(parent, null, G, 160, 200, 40, 20, 'shape=ground;labelPosition=left;align=right;');
-					var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=n;entryPerimeter=0;targetPort=n');
-					var e2 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=s;entryPerimeter=0;targetPort=s');
-					var e5 = graph.insertEdge(parent, null, null, v5, v1, 'sourcePort=n;entryPerimeter=0;targetPort=s');
+					var v1 = graph.insertVertex(parent, null, R1, 40, 80, 80, 30, 'shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v2 = graph.insertVertex(parent, null, R2, 160, 80, 80, 30, 'shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
+					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=e;entryPerimeter=0;targetPort=w');
+
 					
 				}
 				finally
@@ -564,15 +579,6 @@
 		}
 		
 		return mxGraphCreateHandler.apply(this, arguments);
-	};
-	
-	function read(graph, filename)
-	{
-		var req = mxUtils.load(filename);
-		var root = req.getDocumentElement();
-		var dec = new mxCodec(root.ownerDocument);
-		
-		dec.decode(root, graph.getModel());
 	};
 	
 	</script>

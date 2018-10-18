@@ -15,7 +15,6 @@ RUN yum -y install libXt
 RUN yum -y install libgomp
 
 # Add ngspice
-ADD circuit.net /circuit.net
 ADD ngspice.rpm /ngspice.rpm
 RUN rpm -ivh /ngspice.rpm
 RUN yum install ngspice

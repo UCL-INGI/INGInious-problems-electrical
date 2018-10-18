@@ -13,7 +13,7 @@ def main():
 		elif(letters[0] == '@') :
 			result += " " + word + ' = ' + tokens[i+2]
 		my_file.close()
-	if(result == " v(n001) = 1.000000e+01 i(v1) = -3.50000e+00 @r1[i] = 2.500000e+00 @r2[i] = 1.000000e+00") :
+	if(result == " v(w0) = 1.000000e+01 @r1[i] = 2.000000e+00 i(v) = -2.00000e+00") :
 		print("True")
 	else :
 		print("False")
