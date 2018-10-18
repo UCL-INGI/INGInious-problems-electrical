@@ -1,7 +1,7 @@
 accessible: true
 author: Arthurs
 context: In this task, you will have to enjoy an electrical circuit.
-environment: default
+environment: ngspice
 evaluate: best
 groups: false
 input_random: '0'

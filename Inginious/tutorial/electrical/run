@@ -1,10 +1,11 @@
 #!/bin/bash
 
-ngspice circuit.net
+ngspice circuit.net > result.txt
 
-run
-
-print V(n001)
-
-
-#feedback-result success
+output=$(python3 parser_ngspice.py)
+if [ "$output" = "True" ]; then
+    feedback-result success
+else
+	feedback-result failed
+	feedback-msg -em "bouh"
+fi

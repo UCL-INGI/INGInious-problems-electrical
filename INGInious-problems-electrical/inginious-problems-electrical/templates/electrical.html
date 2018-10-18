@@ -55,8 +55,6 @@ $#
 				V.setAttribute('name', 'V');
 				V.setAttribute('value', '10');
 				var G = doc.createElement('Ground');
-				G.setAttribute('name', '');
-				G.setAttribute('value', '');
 				
 
 
@@ -64,6 +62,14 @@ $#
 				var graph = new mxGraph(container);
                 graph.setConnectable(true);
                 new mxKeyHandler(graph);
+                
+                // Adds an option to view the XML of the graph
+				document.body.appendChild(mxUtils.button('View XML', function()
+				{
+					var encoder = new mxCodec();
+					var node = encoder.encode(graph.getModel());
+					mxUtils.popup(mxUtils.getPrettyXml(node), true);
+				}));
                 
                 // Overrides method to disallow edge label editing
 				graph.isCellEditable = function(cell)
@@ -128,24 +134,6 @@ $#
 
 						return name + ' ' + value;
 					}
-				};
-
-				// Adds a special tooltip for edges
-				graph.setTooltips(true);
-				
-				var getTooltipForCell = graph.getTooltipForCell;
-				graph.getTooltipForCell = function(cell)
-				{
-					// Adds some relation details for edges
-					if (graph.getModel().isEdge(cell))
-					{
-						var src = this.getLabel(this.getModel().getTerminal(cell, true));
-						var trg = this.getLabel(this.getModel().getTerminal(cell, false));
-
-						return src + ' ' + cell.value.nodeName + ' ' +  trg;
-					}
-
-					return getTooltipForCell.apply(this, arguments);
 				};
 			
 			    // Disables automatic handling of ports. This disables the reset of the
@@ -328,16 +316,13 @@ $#
 				graph.getModel().beginUpdate();
 				try
 				{                   
-					var v1 = graph.insertVertex(parent, null, R1, 100, 150, 80, 30, 'shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v2 = graph.insertVertex(parent, null, R2, 200, 80, 30, 80, 'shape=resistor vertical;labelPosition=left;align=right;');
-					var v3 = graph.insertVertex(parent, null, C, 100, 50, 80, 40, 'shape=capacitor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
+					// TODO : v1 v4 ou v4 v1 change la courbure des edges
+					var v1 = graph.insertVertex(parent, null, R1, 160, 80, 30, 80, 'shape=resistor vertical;verticalLabelPosition=top;verticalAlign=bottom;');
 					var v4 = graph.insertVertex(parent, null, V, 50, 100, 40, 40, 'shape=voltage;labelPosition=left;align=right;');
 					var v5 = graph.insertVertex(parent, null, G, 160, 200, 40, 20, 'shape=ground;labelPosition=left;align=right;');
-					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=e;entryPerimeter=0;targetPort=s');
-					var e2 = graph.insertEdge(parent, null, null, v3, v4, 'sourcePort=w;entryPerimeter=0;targetPort=n');
-					var e3 = graph.insertEdge(parent, null, null, v3, v2, 'sourcePort=e;entryPerimeter=0;targetPort=n');
-					var e4 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=w;entryPerimeter=0;targetPort=s');
-					var e5 = graph.insertEdge(parent, null, null, v5, v1, 'sourcePort=n;entryPerimeter=0;targetPort=e');
+					var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=n;entryPerimeter=0;targetPort=n');
+					var e2 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=s;entryPerimeter=0;targetPort=s');
+					var e5 = graph.insertEdge(parent, null, null, v5, v1, 'sourcePort=n;entryPerimeter=0;targetPort=s');
 					
 				}
 				finally
@@ -371,7 +356,7 @@ $#
 				// Gets the selection cell
 				var cell = graph.getSelectionCell();
 
-				if (cell != null)
+				if (cell != null && cell.value.nodeName.toLowerCase() == 'component')
 				{
 					// Writes the title
 					var center = document.createElement('center');

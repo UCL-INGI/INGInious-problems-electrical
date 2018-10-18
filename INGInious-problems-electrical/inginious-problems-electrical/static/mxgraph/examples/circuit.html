@@ -39,15 +39,19 @@
 				var R1 = doc.createElement('Component');
 				R1.setAttribute('name', 'R1');
 				R1.setAttribute('value', '5');
+				R1.setAttribute('type', 'Resistor');
 				var R2 = doc.createElement('Component');
 				R2.setAttribute('name', 'R2D2');
 				R2.setAttribute('value', '4');
+				R2.setAttribute('type', 'Resistor');
 				var C = doc.createElement('Component');
 				C.setAttribute('name', 'Kappa');
 				C.setAttribute('value', '0.5');
+				C.setAttribute('type', 'Capacitor');
 				var V = doc.createElement('Component');
 				V.setAttribute('name', 'V');
 				V.setAttribute('value', '10');
+				V.setAttribute('type', 'Voltage');
 				var G = doc.createElement('Ground');
 				
 
@@ -310,16 +314,13 @@
 				graph.getModel().beginUpdate();
 				try
 				{                   
-					var v1 = graph.insertVertex(parent, null, R1, 100, 150, 80, 30, 'shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v2 = graph.insertVertex(parent, null, R2, 200, 80, 30, 80, 'shape=resistor vertical;labelPosition=left;align=right;');
-					var v3 = graph.insertVertex(parent, null, C, 100, 50, 80, 40, 'shape=capacitor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
+					// TODO : v1 v4 ou v4 v1 change la courbure des edges
+					var v1 = graph.insertVertex(parent, null, R1, 160, 80, 30, 80, 'shape=resistor vertical;verticalLabelPosition=top;verticalAlign=bottom;');
 					var v4 = graph.insertVertex(parent, null, V, 50, 100, 40, 40, 'shape=voltage;labelPosition=left;align=right;');
 					var v5 = graph.insertVertex(parent, null, G, 160, 200, 40, 20, 'shape=ground;labelPosition=left;align=right;');
-					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=e;entryPerimeter=0;targetPort=s');
-					var e2 = graph.insertEdge(parent, null, null, v3, v4, 'sourcePort=w;entryPerimeter=0;targetPort=n');
-					var e3 = graph.insertEdge(parent, null, null, v3, v2, 'sourcePort=e;entryPerimeter=0;targetPort=n');
-					var e4 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=w;entryPerimeter=0;targetPort=s');
-					var e5 = graph.insertEdge(parent, null, null, v5, v1, 'sourcePort=n;entryPerimeter=0;targetPort=e');
+					var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=n;entryPerimeter=0;targetPort=n');
+					var e2 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=s;entryPerimeter=0;targetPort=s');
+					var e5 = graph.insertEdge(parent, null, null, v5, v1, 'sourcePort=n;entryPerimeter=0;targetPort=s');
 					
 				}
 				finally
@@ -367,8 +368,10 @@
 					var attrs = cell.value.attributes;
 					
 					for (var i = 0; i < attrs.length; i++)
-					{
-						createTextField(graph, form, cell, attrs[i]);
+					{	
+						if(attrs[i].nodeName != 'type') {
+							createTextField(graph, form, cell, attrs[i]);
+						}
 					}
 	
 					div.appendChild(form.getTable());
