@@ -15,7 +15,6 @@
 
 	<!-- Loads and initializes the library -->
 	<script type="text/javascript" src="../src/js/mxClient.js"></script>
-    <script type="text/javascript" src="../src/js/eleccomponent.js"></script>
 	<!-- Example code -->
 	<script type="text/javascript">
 		// Program starts here. Creates a sample graph in the
@@ -530,8 +529,17 @@
 	};
 	
 	</script>
-
+	
 </head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	$("button").click(function(){
+		$(this).hide();
+	});
+});
+</script>
 
 <!-- Page passes the container for the graph to the program -->
 <body onload="main(document.getElementById('graphContainer'))">

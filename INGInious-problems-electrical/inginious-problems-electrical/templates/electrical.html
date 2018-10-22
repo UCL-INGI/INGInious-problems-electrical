@@ -5,7 +5,6 @@ $# This file is part of INGInious. See the LICENSE and the COPYRIGHTS files for
 $# more information about the licensing of this file.
 $#
 
-
 <body onload="main(document.getElementById('graphContainer'))">
 	<table style="position:relative;">
 	<tr>
@@ -64,14 +63,6 @@ $#
 				var graph = new mxGraph(container);
                 graph.setConnectable(true);
                 new mxKeyHandler(graph);
-                
-                // Adds an option to view the XML of the graph
-				document.body.appendChild(mxUtils.button('View XML', function()
-				{
-					var encoder = new mxCodec();
-					var node = encoder.encode(graph.getModel());
-					mxUtils.popup(mxUtils.getPrettyXml(node), true);
-				}));
                 
                 // Overrides method to disallow edge label editing
 				graph.isCellEditable = function(cell)
@@ -536,5 +527,14 @@ $#
 	};
 	
 	</script>
+
+<script>
+/*jQuery(document).ready(function(){
+	jQuery("#task-submit").click(function(){
+		jQuery(this).hide();
+	});
+});*/
+</script>
+
 
 <input type="hidden" name="$inputId" value="" class="monospace form-control"/>
