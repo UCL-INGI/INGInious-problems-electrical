@@ -240,6 +240,7 @@
 				    	
 				    	var port;
 					    var ports = vertex.shape['stencil'].constraints;
+						console.log(vertex)
 					    if(ports[0].name == constraint.id)
 					    {
 					    	port = ports[0];
@@ -298,9 +299,11 @@
 					// TODO : v1 v4 ou v4 v1 change la courbure des edges
 					var v1 = graph.insertVertex(parent, null, R1, 70, 30, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
 					var v2 = graph.insertVertex(parent, null, R2, 70, 170, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v3 = graph.insertVertex(parent, null, V, 40, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;')
-					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=out;entryPerimeter=0;targetPort=out');
-					var e2 = graph.insertEdge(parent, null, null, v2, v3, 'sourcePort=in;entryPerimeter=0;targetPort=S');
+					var v3 = graph.insertVertex(parent, null, V, 40, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v4 = graph.insertVertex(parent, null, G, 170, 170, 20, 20,  'shape=Signal Ground;');
+					var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
+					var e2 = graph.insertEdge(parent, null, null, v2, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
+					var e3 = graph.insertEdge(parent, null, null, v2, v3, 'sourcePort=in;entryPerimeter=0;targetPort=S');
 					var e3 = graph.insertEdge(parent, null, null, v3, v1, 'sourcePort=N;entryPerimeter=0;targetPort=in');
 					
 				}
