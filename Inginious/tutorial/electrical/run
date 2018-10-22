@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#getinput "thecode" > student/student_code.py
+
 python3 parser_xml.py
 ngspice circuitSpice.cir > result.txt
 
