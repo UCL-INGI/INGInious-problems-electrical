@@ -54,8 +54,6 @@
 				V.setAttribute('type', 'Voltage');
 				var G = doc.createElement('Ground');
 				
-
-
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
                 graph.setConnectable(true);
@@ -84,15 +82,11 @@
 						{
 							var name = cell.getAttribute('name', '');
 							var value = cell.getAttribute('value', '');
-
 							return name + ' ' + value;
 						}
-
 					}
-
 					return '';
 				};
-
 				// Overrides method to store a cell label in the model
 				var cellLabelChanged = graph.cellLabelChanged;
 				graph.cellLabelChanged = function(cell, newValue, autoSize)
@@ -101,18 +95,14 @@
 						cell.value.nodeName.toLowerCase() == 'component')
 					{
 						var pos = newValue.indexOf(' ');
-
 						var name = (pos > 0) ? newValue.substring(0,
 								pos) : newValue;
 						var value = (pos > 0) ? newValue.substring(
 								pos + 1, newValue.length) : '';
-
 						// Clones the value for correct undo/redo
 						var elt = cell.value.cloneNode(true);
-
 						elt.setAttribute('name', name);
 						elt.setAttribute('value', value);
-
 						newValue = elt;
 						autoSize = false;
 					}
@@ -129,7 +119,6 @@
 					{
 						var name = cell.getAttribute('name', '');
 						var value = cell.getAttribute('value', '');
-
 						return name + ' ' + value;
 					}
 				};
@@ -146,7 +135,7 @@
 				styleV['movable'] = '1';
 				styleV['resizable'] = '1';
 				styleV[mxConstants.STYLE_STROKECOLOR] = '#000000';
-				styleV[mxConstants.STYLE_FILLCOLOR] = '#FFFF00';
+				styleV[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
 				var styleE = graph.getStylesheet().getDefaultEdgeStyle();
 				delete styleE['endArrow'];
 				styleE['movable'] = '1';
@@ -173,7 +162,6 @@
 			    {
 				    return terminal;
 			    };
-
                 // Returns all possible ports for a given terminal
 			    graph.getAllConnectionConstraints = function(terminal, source)
 			    {
@@ -243,78 +231,42 @@
 				
 				    return null;
 			    };
-
 			    // Returns the actual point for a port by redirecting the constraint to the port
 			    graphGetConnectionPoint = graph.getConnectionPoint;
 			    graph.getConnectionPoint = function(vertex, constraint)
 			    {
 				    if (constraint.id != null && vertex != null && vertex.shape != null)
 				    {
-					    var port = vertex.shape.getPorts()[constraint.id];
-					
-					    if (port != null)
+				    	
+				    	var port;
+					    var ports = vertex.shape['stencil'].constraints;
+					    if(ports[0].name == constraint.id)
 					    {
-						    constraint = new mxConnectionConstraint(new mxPoint(port.x, port.y), port.perimeter);
+					    	port = ports[0];
+
+					    }
+					    else
+					    {
+					    	port = ports[1];
+					    }
+						
+					    if (port != null)	
+					    {
+						    constraint = new mxConnectionConstraint(new mxPoint(port.point.x, port.point.y), port.perimeter);
 					    }
 				    }
 				
 				    return graphGetConnectionPoint.apply(this, arguments);
 			    };
-
-
-                // create ports
-                var portsH = new Array(); // horizontal ports
-                portsH['w'] = {x: 0, y: 0.5, perimeter: true, constraint: 'west'};
-		        portsH['e'] = {x: 1, y: 0.5, perimeter: true, constraint: 'east'};
-                ResistorShapeH.prototype.getPorts = function()
-		        {
-			        return portsH;
-		        };
-                CapacitorShapeH.prototype.getPorts = function()
-		        {
-			        return portsH;
-		        };
-                InductorShapeH.prototype.getPorts = function()
-		        {
-			        return portsH;
-		        };
-				
-                var portsV = new Array(); // vertical ports
-                portsV['n'] = {x: 0.5, y: 0, perimeter: true, constraint: 'north'};
-		        portsV['s'] = {x: 0.5, y: 1, perimeter: true, constraint: 'south'};
-                ResistorShapeV.prototype.getPorts = function()
-		        {
-			        return portsV;
-		        };
-                CapacitorShapeV.prototype.getPorts = function()
-		        {
-			        return portsV;
-		        };
-                InductorShapeV.prototype.getPorts = function()
-		        {
-			        return portsV;
-		        };
-                VoltageShape.prototype.getPorts = function()
-		        {
-			        return portsV;
-		        };
-		        var portsG = new Array(); // ground port
-		        portsG['n'] = {x: 0.5, y: 0, perimeter: true, constraint: 'north'};
-		        GroundShape.prototype.getPorts = function()
-		        {
-		        	return portsG;
-		        };
+                
                 
 				
-				// Gets the default parent for inserting new cells. This
-				// is normally the first child of the root (ie. layer 0).
 				var parent = graph.getDefaultParent();
 								
 				// Adds cells to the model in a single step
 				graph.getModel().beginUpdate();
 				try
 				{                   
-
 					var req = mxUtils.load('stencils/resistor.xml');
 					var root = req.getDocumentElement();
 					var shape = root.firstChild;
@@ -329,13 +281,27 @@
 						shape = shape.nextSibling;
 					}
 
-
+					var req = mxUtils.load('stencils/signal_sources.xml');
+					var root = req.getDocumentElement();
+					var shape = root.firstChild;
+					
+					while (shape != null)
+					{
+						if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
+						{
+							mxStencilRegistry.addStencil(shape.getAttribute('name'), new mxStencil(shape));
+						}
+					
+						shape = shape.nextSibling;
+					}
 
 					// TODO : v1 v4 ou v4 v1 change la courbure des edges
-					var v1 = graph.insertVertex(parent, null, R1, 40, 80, 80, 30, 'shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v2 = graph.insertVertex(parent, null, R2, 160, 80, 80, 30, 'shape=resistor horizontal;verticalLabelPosition=top;verticalAlign=bottom;');
-					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=e;entryPerimeter=0;targetPort=w');
-
+					var v1 = graph.insertVertex(parent, null, R1, 70, 30, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v2 = graph.insertVertex(parent, null, R2, 70, 170, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v3 = graph.insertVertex(parent, null, V, 40, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;')
+					var e1 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=out;entryPerimeter=0;targetPort=out');
+					var e2 = graph.insertEdge(parent, null, null, v2, v3, 'sourcePort=in;entryPerimeter=0;targetPort=S');
+					var e3 = graph.insertEdge(parent, null, null, v3, v1, 'sourcePort=N;entryPerimeter=0;targetPort=in');
 					
 				}
 				finally
@@ -349,26 +315,20 @@
 				{
 					selectionChanged(graph);
 				});
-
 				selectionChanged(graph);
 			}
-
 			/**
 			 * Updates the properties panel
 			 */
 			function selectionChanged(graph)
 			{
 				var div = document.getElementById('properties');
-
 				// Forces focusout in IE
 				graph.container.focus();
-
 				// Clears the DIV the non-DOM way
 				div.innerHTML = '';
-
 				// Gets the selection cell
 				var cell = graph.getSelectionCell();
-
 				if (cell != null && cell.value.nodeName.toLowerCase() == 'component')
 				{
 					// Writes the title
@@ -376,7 +336,6 @@
 					mxUtils.writeln(center, 'Editing ' + cell.getAttribute('name'));
 					div.appendChild(center);
 					mxUtils.br(div);
-
 					// Creates the form from the attributes of the user object
 					var form = new mxForm();
 	
@@ -393,19 +352,16 @@
 					mxUtils.br(div);
 				}
 			}
-
 			/**
 			 * Creates the textfield for the given property.
 			 */
 			function createTextField(graph, form, cell, attribute)
 			{
 				var input = form.addText(attribute.nodeName + ':', attribute.nodeValue);
-
 				var applyHandler = function()
 				{
 					var newValue = input.value || '';
 					var oldValue = cell.getAttribute(attribute.nodeName, '');
-
 					if (newValue != oldValue)
 					{
 						graph.getModel().beginUpdate();
@@ -423,7 +379,6 @@
                         }
 					}
 				}; 
-
 				mxEvent.addListener(input, 'keypress', function (evt)
 				{
 					// Needs to take shift into account for textareas
@@ -433,7 +388,6 @@
 						input.blur();
 					}
 				});
-
 				if (mxClient.IS_IE)
 				{
 					mxEvent.addListener(input, 'focusout', applyHandler);
@@ -490,7 +444,6 @@
 		}
 		
 		var first = pt;
-
 		// Adds the waypoints
 		if (hints != null && hints.length > 0)
 		{
@@ -503,7 +456,6 @@
 			{
 				mxLog.show();
 				mxLog.debug('add waypoint');
-
 				pt = new mxPoint(pt.x, hint.y);
 				result.push(pt);
 				pt = pt.clone();
@@ -514,7 +466,6 @@
 			{
 				horizontal = !horizontal;
 				hint = state.view.transformControlPoint(state, hints[i]);
-
 				if (horizontal)
 				{
 					if (pt.y != hint.y)
@@ -534,16 +485,13 @@
 		{
 			hint = pt;
 		}
-
 		// Adds the last point
 		pt = pts[pts.length - 1];
-
 		// TODO: Should move along connected segment
 		if (pt == null && target != null)
 		{
 			pt = new mxPoint(state.view.getRoutingCenterX(target), state.view.getRoutingCenterY(target));
 		}
-
 		if (horizontal)
 		{
 			if (pt.y != hint.y && first.x != pt.x)
