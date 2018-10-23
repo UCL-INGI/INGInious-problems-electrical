@@ -301,7 +301,8 @@ $#
 					var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
 					var e2 = graph.insertEdge(parent, null, null, v2, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
 					var e3 = graph.insertEdge(parent, null, null, v2, v3, 'sourcePort=in;entryPerimeter=0;targetPort=S');
-					var e3 = graph.insertEdge(parent, null, null, v3, v1, 'sourcePort=N;entryPerimeter=0;targetPort=in');
+					var e4 = graph.insertEdge(parent, null, null, v3, v1, 'sourcePort=N;entryPerimeter=0;targetPort=in');
+					
 					
 				}
 				finally
@@ -532,4 +533,4 @@ $#
 	</script>
 
 
-<input type="visible" id="value-submit" name="$inputId" value="" class="monospace form-control"/>
+<input type="hidden" id="value-submit" name="$inputId" value="" class="monospace form-control"/>

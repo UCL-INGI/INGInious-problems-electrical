@@ -1,10 +1,15 @@
 #!/bin/bash
 
-#getinput "thecode" > student/student_code.py
+# get the modified graph by the student
+getinput "thegraph" > student/student_graph.xml
 
-python3 parser_xml.py
+# parse the graph to a spice circuit
+python3 parser_xml.py student/student_graph.xml
+
+# compute currents and voltages of the circuit 
 ngspice circuitSpice.cir > result.txt
 
+# check the solution
 output=$(python3 parser_ngspice.py)
 if [ "$output" = "True" ]; then
     feedback-result success

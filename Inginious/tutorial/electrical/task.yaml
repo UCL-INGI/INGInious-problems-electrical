@@ -1,6 +1,6 @@
 accessible: true
 author: Arthurs
-context: In this task, you will have to enjoy an electrical circuit.
+context: In this task, you will have to enjoy an electrical circuit. Modified the resistors in order to have a current of 1A in the circuit.
 environment: ngspice
 evaluate: best
 groups: false
@@ -13,14 +13,11 @@ name: Electrical exercice
 network_grading: false
 order: 0
 problems:
-    question1:
-        answer: ''
+    thegraph:
+        name: 'Circuit'
         type: electrical
-        header: ''
-        name: ''
 stored_submissions: 0
 submission_limit:
     amount: -1
     period: -1
-tags: {}
 weight: 1.0
