@@ -99,4 +99,5 @@ def init(plugin_manager, course_factory, client, plugin_config):
     # TODO: Replace by shared static middleware and let webserver serve the files
 	plugin_manager.add_page('/plugins/electrical/static/(.+)', StaticMockPage)
 	plugin_manager.add_hook("javascript_header", lambda: "/plugins/electrical/static/mxgraph/mxClient.min.js")
+	plugin_manager.add_hook("javascript_header", lambda: "/plugins/electrical/static/electrical.js")
 	course_factory.get_task_factory().add_problem_type(DisplayableElectricalProblem)

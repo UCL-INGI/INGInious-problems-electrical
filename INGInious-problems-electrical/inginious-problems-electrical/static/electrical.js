@@ -1,26 +1,20 @@
-<!--
-  Copyright (c) 2006-2018, JGraph Ltd
-  
-  Hello, World! example for mxGraph. This example demonstrates using
-  a DOM node to create a graph and adding vertices and edges.
--->
-<html>
-<head>
-	<title>MDR</title>
+function load_input_electrical(submissionid, key, input) { 
+    if(key in input) {
+        document.getElementById('graphContainer').innerHTML = "";  // clean the older graph
+        main(document.getElementById('graphContainer'), input[key]);
+    }
+    else
+        console.log("pas de xml");
+}
 
-	<!-- Sets the basepath for the library if not in same directory -->
-	<script type="text/javascript">
-		mxBasePath = '../src';
-	</script>
+function studio_init_template_electrical(well, pid, problem)
+{   
+    if("default" in problem)
+        $('#default-' + pid, well).val(problem["default"]);
+}
 
-	<!-- Loads and initializes the library -->
-	<script type="text/javascript" src="../src/js/mxClient.js"></script>
-	<!-- Example code -->
-	<script type="text/javascript">
-		// Program starts here. Creates a sample graph in the
-		// DOM node with the specified ID. This function is invoked
-		// from the onLoad event handler of the document (see below).
-		function main(container)
+
+function main(container, xml)
 		{
 			// Checks if the browser is supported
 			if (!mxClient.isBrowserSupported())
@@ -29,22 +23,45 @@
 				mxUtils.error('Browser is not supported!', 200, false);
 			}
 			else
-			{	
+			{
 				// Disables the built-in context menu
 				mxEvent.disableContextMenu(container);
+				
+				var doc = mxUtils.createXmlDocument();
+				
+				var R1 = doc.createElement('Component');
+				R1.setAttribute('name', 'R1');
+				R1.setAttribute('value', '5');
+				R1.setAttribute('type', 'Resistor');
+				var R2 = doc.createElement('Component');
+				R2.setAttribute('name', 'R2D3');
+				R2.setAttribute('value', '4');
+				R2.setAttribute('type', 'Resistor');
+				var C = doc.createElement('Component');
+				C.setAttribute('name', 'Kappa');
+				C.setAttribute('value', '0.5');
+				C.setAttribute('type', 'Capacitor');
+				var V = doc.createElement('Component');
+				V.setAttribute('name', 'V');
+				V.setAttribute('value', '10');
+				V.setAttribute('type', 'Voltage');
+				var G = doc.createElement('Ground');
+
+				//The list of xml files
+				var stencilsFile = new Array("resistors.xml","signal_sources.xml") 
 				
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
                 graph.setConnectable(true);
                 new mxKeyHandler(graph);
-                
-                // Adds an option to view the XML of the graph
-				document.body.appendChild(mxUtils.button('View XML', function()
-				{
-					var encoder = new mxCodec();
-					var node = encoder.encode(graph.getModel());
-					mxUtils.popup(mxUtils.getPrettyXml(node), true);
-				}));
+				// send xml of 2 graph in 2 input when submit
+				jQuery(document).ready(function(){
+					jQuery("#task-submit").click(function(){
+						var encoder = new mxCodec();
+						var node = encoder.encode(graph.getModel());
+						jQuery("#value-submit").val(mxUtils.getPrettyXml(node));
+					});
+				});
                 
                 // Overrides method to disallow edge label editing
 				graph.isCellEditable = function(cell)
@@ -237,34 +254,50 @@
 				
 				    return graphGetConnectionPoint.apply(this, arguments);
 			    };
-
+                
+                
+				
+				var parent = graph.getDefaultParent();
 								
 				// Adds cells to the model in a single step
 				graph.getModel().beginUpdate();
-
-		
-				//The list of xml files
-				var stencilsFile = new Array("resistors.xml","signal_sources.xml") 
-
-				stencilsFile.forEach(function(element){
-					var req = mxUtils.load('stencils/' + element);
-					var root = req.getDocumentElement();
-					var shape = root.firstChild;
-			
-					while (shape != null)
-					{
-						if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
+				try
+				{                   
+					stencilsFile.forEach(function(element){
+						var req = mxUtils.load('/plugins/electrical/static/stencils/' + element);
+						var root = req.getDocumentElement();
+						var shape = root.firstChild;
+					
+						while (shape != null)
 						{
-							mxStencilRegistry.addStencil(shape.getAttribute('name'), new mxStencil(shape));
+							if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
+							{
+								mxStencilRegistry.addStencil(shape.getAttribute('name'), new mxStencil(shape));
+							}
+					
+							shape = shape.nextSibling;
 						}
-			
-						shape = shape.nextSibling;
-					}
-				});
-				
-				createCircuit(graph);
-			    
-				// Implements a properties panel that uses
+					});
+					
+						
+					// TODO : v1 v4 ou v4 v1 change la courbure des edges
+					var v1 = graph.insertVertex(parent, null, R1, 70, 30, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v2 = graph.insertVertex(parent, null, R2, 70, 170, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v3 = graph.insertVertex(parent, null, V, 40, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');
+					var v4 = graph.insertVertex(parent, null, G, 170, 170, 20, 20,  'shape=Signal Ground;');
+					var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
+					var e2 = graph.insertEdge(parent, null, null, v2, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
+					var e3 = graph.insertEdge(parent, null, null, v2, v3, 'sourcePort=in;entryPerimeter=0;targetPort=S');
+					var e4 = graph.insertEdge(parent, null, null, v3, v1, 'sourcePort=N;entryPerimeter=0;targetPort=in');
+					
+					
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+			    // Implements a properties panel that uses
 				// mxCellAttributeChange to change properties
 				graph.getSelectionModel().addListener(mxEvent.CHANGE, function(sender, evt)
 				{
@@ -284,7 +317,7 @@
 				div.innerHTML = '';
 				// Gets the selection cell
 				var cell = graph.getSelectionCell();
-				if (cell != null && cell.value != null && cell.value.nodeName.toLowerCase() == 'component')
+				if (cell != null && cell.value.nodeName.toLowerCase() == 'component')
 				{
 					// Writes the title
 					var center = document.createElement('center');
@@ -483,90 +516,3 @@
 		
 		return mxGraphCreateHandler.apply(this, arguments);
 	};
-	
-	</script>
-
-	<script type="text/javascript">
-	function createCircuit(graph){
-        
-        //var xml = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><Component name="R1" value="5" type="Resistor" id="2"><mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1"><mxGeometry x="70" y="30" width="80" height="30" as="geometry"/></mxCell></Component><Component name="R2D2" value="4" type="Resistor" id="3"><mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1"><mxGeometry x="70" y="170" width="80" height="30" as="geometry"/></mxCell></Component><Component name="V" value="10" type="Voltage" id="4"><mxCell style="shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1"><mxGeometry x="40" y="100" width="40" height="40" as="geometry"/></mxCell></Component><Ground id="5"><mxCell style="shape=Signal Ground;" vertex="1" parent="1"><mxGeometry x="210" y="200" width="20" height="20" as="geometry"/></mxCell></Ground><mxCell id="6" style="sourcePort=out;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="2" target="5"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="7" style="sourcePort=out;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="3" target="5"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="8" style="sourcePort=in;entryPerimeter=0;targetPort=S" edge="1" parent="1" source="3" target="4"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="9" style="sourcePort=N;entryPerimeter=0;targetPort=in" edge="1" parent="1" source="4" target="2"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>'
-        var xml = '<root><mxCell id="2" value="World!Vishal" vertex="1"><mxGeometry x="200" y="150" width="80" height="30" as="geometry"/></mxCell><mxCell id="3" edge="1" source="2"><mxGeometry relative="1" as="geometry"><mxPoint x="440" y="90" as="targetPoint"/></mxGeometry></mxCell></root>';
-        var doc = mxUtils.parseXml(xml);
-        var codec = new mxCodec(doc);
-        var elt = doc.documentElement.firstChild;
-        
-        var cells = [];
-        while (elt != null){                
-          cells.push(codec.decodeCell(elt));
-            graph.refresh();
-          elt = elt.nextSibling;
-        }
-
-        graph.addCells(cells);
-        var parent = graph.getDefaultParent();
-        
-        graph.getModel().endUpdate();
-        
-
-        /*var doc = mxUtils.createXmlDocument();
-		var R1 = doc.createElement('Component');
-		R1.setAttribute('name', 'R1');
-		R1.setAttribute('value', '5');
-		R1.setAttribute('type', 'Resistor');
-		var R2 = doc.createElement('Component');
-		R2.setAttribute('name', 'R2D2');
-		R2.setAttribute('value', '4');
-		R2.setAttribute('type', 'Resistor');
-		var C = doc.createElement('Component');
-		C.setAttribute('name', 'Kappa');
-		C.setAttribute('value', '0.5');
-		C.setAttribute('type', 'Capacitor');
-		var V = doc.createElement('Component');
-		V.setAttribute('name', 'V');
-		V.setAttribute('value', '10');
-		V.setAttribute('type', 'Voltage');
-		var G = doc.createElement('Ground');
-
-		try
-		{                   
-			
-			// TODO : v1 v4 ou v4 v1 change la courbure des edges
-			var parent = graph.getDefaultParent();
-			var v1 = graph.insertVertex(parent, null, R1, 70, 30, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
-			var v2 = graph.insertVertex(parent, null, R2, 70, 170, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
-			var v3 = graph.insertVertex(parent, null, V, 10, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');
-			var v4 = graph.insertVertex(parent, null, G, 170, 190, 20, 20,  'shape=Signal Ground;');
-			var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
-			var e2 = graph.insertEdge(parent, null, null, v2, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
-			var e4 = graph.insertEdge(parent, null, null, v1, v3, 'sourcePort=in;entryPerimeter=0;targetPort=N');
-			var e3 = graph.insertEdge(parent, null, null, v2, v3, 'sourcePort=in;entryPerimeter=0;targetPort=S');
-			
-		}
-		finally
-		{
-			// Updates the display
-			graph.getModel().endUpdate();
-		}*/
-	}
-	</script>
-	
-</head>
-
-<!-- Page passes the container for the graph to the program -->
-<body onload="main(document.getElementById('graphContainer'))">
-	<table style="position:relative;">
-	<tr>
-		<td>
-			<div id="graphContainer"
-				style="overflow:hidden;width:321px;height:241px;cursor:default;">
-			</div>
-		</td>
-		<td valign="top">
-			<div id="properties"
-				style="padding: 10px;">
-			</div>
-		</td>
-	</tr>
-	</table>
-</body>
-</html>
