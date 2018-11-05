@@ -241,7 +241,7 @@
 
 		
 				//The list of xml files
-				var stencilsFile = new Array("resistors.xml","signal_sources.xml") 
+				var stencilsFile = new Array("resistors.xml","signal_sources.xml", "capacitors.xml", "inductors.xml") 
 
 				stencilsFile.forEach(function(element){
 					var req = mxUtils.load('stencils/' + element);
@@ -507,17 +507,19 @@
 		try
 		{                   
 			
+            mxVertexHandler.prototype.rotationEnabled = true;
 			// TODO : v1 v4 ou v4 v1 change la courbure des edges
             parent = graph.getDefaultParent();
-			var v1 = graph.insertVertex(parent, null, R1, 70, 30, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
-			var v2 = graph.insertVertex(parent, null, C, 70, 170, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
+			var v1 = graph.insertVertex(parent, null, R1, 50, 100, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
+			var v2 = graph.insertVertex(parent, null, R2, 100, 100, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
 			var v3 = graph.insertVertex(parent, null, V, 10, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');
-			var v4 = graph.insertVertex(parent, null, G, 170, 190, 20, 20,  'shape=Signal Ground;');
-			var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
-			var e2 = graph.insertEdge(parent, null, null, v2, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
-			var e4 = graph.insertEdge(parent, null, null, v1, v3, 'sourcePort=in;entryPerimeter=0;targetPort=N');
-			var e3 = graph.insertEdge(parent, null, null, v2, v3, 'sourcePort=in;entryPerimeter=0;targetPort=S');
-			
+			var v4 = graph.insertVertex(parent, null, G, 80, 170, 20, 20,  'shape=Signal Ground;');
+			var e1 = graph.insertEdge(parent, null, null, v1, v3, 'sourcePort=in;entryPerimeter=0;targetPort=N');
+			var e2 = graph.insertEdge(parent, null, null, v1, v3, 'sourcePort=out;entryPerimeter=0;targetPort=S');
+			var e3 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=in;entryPerimeter=0;targetPort=in');
+			var e4 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=out;entryPerimeter=0;targetPort=out');
+			var e5 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
+            mxVertexHandler.prototype.rotationEnabled = false;
 		}
 		finally
 		{

@@ -1,7 +1,7 @@
 accessible: true
 author: Arthurs
 context: In this task, you will have to enjoy an electrical circuit. Modified the
-    resistors in order to have a current of 1A in the circuit.
+    resistors in order to have a current of 1A throught the voltage source.
 environment: ngspice
 evaluate: best
 groups: false
@@ -10,7 +10,7 @@ limits:
     output: '2'
     memory: '100'
     time: '30'
-name: Electrical exercice
+name: Electrical exercice 2
 network_grading: false
 order: 0
 problems:
@@ -23,13 +23,13 @@ problems:
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <Component name="R1" value="5" type="Resistor" id="2">
-                  <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
-                    <mxGeometry x="70" y="30" width="80" height="30" as="geometry"/>
+                  <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="100" width="80" height="30" as="geometry"/>
                   </mxCell>
                 </Component>
-                <Component name="R2D2" value="10" type="Resistor" id="3">
-                  <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
-                    <mxGeometry x="70" y="170" width="80" height="30" as="geometry"/>
+                <Component name="R2D2" value="4" type="Resistor" id="3">
+                  <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="100" width="80" height="30" as="geometry"/>
                   </mxCell>
                 </Component>
                 <Component name="V" value="10" type="Voltage" id="4">
@@ -39,19 +39,22 @@ problems:
                 </Component>
                 <Ground id="5">
                   <mxCell style="shape=Signal Ground;" vertex="1" parent="1">
-                    <mxGeometry x="170" y="190" width="20" height="20" as="geometry"/>
+                    <mxGeometry x="80" y="170" width="20" height="20" as="geometry"/>
                   </mxCell>
                 </Ground>
-                <mxCell id="6" style="sourcePort=out;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="2" target="5">
+                <mxCell id="6" style="sourcePort=in;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="2" target="4">
                   <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="7" style="sourcePort=out;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="3" target="5">
+                <mxCell id="7" style="sourcePort=out;entryPerimeter=0;targetPort=S" edge="1" parent="1" source="2" target="4">
                   <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="8" style="sourcePort=in;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="2" target="4">
+                <mxCell id="8" style="sourcePort=in;entryPerimeter=0;targetPort=in" edge="1" parent="1" source="2" target="3">
                   <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="9" style="sourcePort=in;entryPerimeter=0;targetPort=S" edge="1" parent="1" source="3" target="4">
+                <mxCell id="9" style="sourcePort=out;entryPerimeter=0;targetPort=out" edge="1" parent="1" source="2" target="3">
+                  <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" style="sourcePort=out;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="2" target="5">
                   <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
               </root>
