@@ -13,7 +13,7 @@ function studio_init_template_electrical(well, pid, problem)
         $('#default-' + pid, well).val(problem["default"]);
 }
 
-function old_submission(container, xml)
+function old_submission(container, xmlText)
 		{
 			// Checks if the browser is supported
 			if (!mxClient.isBrowserSupported())
@@ -252,50 +252,32 @@ function old_submission(container, xml)
 				    }
 				
 				    return graphGetConnectionPoint.apply(this, arguments);
-			    };
-                
-                
+			    };				
+				   
+                //The list of xml files	                  
+				stencilsFile.forEach(function(element){
+					var req = mxUtils.load('/plugins/electrical/static/stencils/' + element);
+					var root = req.getDocumentElement();
+					var shape = root.firstChild;
 				
-				var parent = graph.getDefaultParent();
-								
-				// Adds cells to the model in a single step
-				graph.getModel().beginUpdate();
-				try
-				{                   
-					stencilsFile.forEach(function(element){
-						var req = mxUtils.load('/plugins/electrical/static/stencils/' + element);
-						var root = req.getDocumentElement();
-						var shape = root.firstChild;
-					
-						while (shape != null)
+					while (shape != null)
+					{
+						if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
 						{
-							if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
-							{
-								mxStencilRegistry.addStencil(shape.getAttribute('name'), new mxStencil(shape));
-							}
-					
-							shape = shape.nextSibling;
+							mxStencilRegistry.addStencil(shape.getAttribute('name'), new mxStencil(shape));
 						}
-					});
+				
+						shape = shape.nextSibling;
+					}
+				});
+
+                // create graph from the default xml
+                var parser = new DOMParser();
+                xml = parser.parseFromString(xmlText, "text/xml");
+                var root = xml.documentElement;
+	            var dec = new mxCodec(root.ownerDocument);
+                dec.decode(root, graph.getModel());
 					
-						
-					// TODO : v1 v4 ou v4 v1 change la courbure des edges
-					var v1 = graph.insertVertex(parent, null, R1, 70, 30, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v2 = graph.insertVertex(parent, null, R2, 70, 170, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v3 = graph.insertVertex(parent, null, V, 40, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');
-					var v4 = graph.insertVertex(parent, null, G, 170, 170, 20, 20,  'shape=Signal Ground;');
-					var e1 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
-					var e2 = graph.insertEdge(parent, null, null, v2, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
-					var e3 = graph.insertEdge(parent, null, null, v2, v3, 'sourcePort=in;entryPerimeter=0;targetPort=S');
-					var e4 = graph.insertEdge(parent, null, null, v3, v1, 'sourcePort=N;entryPerimeter=0;targetPort=in');
-					
-					
-				}
-				finally
-				{
-					// Updates the display
-					graph.getModel().endUpdate();
-				}
 			    // Implements a properties panel that uses
 				// mxCellAttributeChange to change properties
 				graph.getSelectionModel().addListener(mxEvent.CHANGE, function(sender, evt)
@@ -490,28 +472,4 @@ function old_submission(container, xml)
 		{
 			result.push(new mxPoint(hint.x, pt.y));
 		}
-	};
-	
-	mxStyleRegistry.putValue('wireEdgeStyle', mxEdgeStyle.WireConnector);
-	
-	// This connector needs an mxEdgeSegmentHandler
-	mxGraphCreateHandler = mxGraph.prototype.createHandler;
-	mxGraph.prototype.createHandler = function(state)
-	{
-		var result = null;
-		
-		if (state != null)
-		{
-			if (this.model.isEdge(state.cell))
-			{
-				var style = this.view.getEdgeStyle(state);
-				
-				if (style == mxEdgeStyle.WireConnector)
-				{
-					return new mxEdgeSegmentHandler(state);
-				}
-			}
-		}
-		
-		return mxGraphCreateHandler.apply(this, arguments);
 	};

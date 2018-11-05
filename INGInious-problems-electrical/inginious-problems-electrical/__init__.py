@@ -36,7 +36,7 @@ class ElectricalProblem(Problem):
 
     def __init__(self, task, problemid, content, translations=None):
         Problem.__init__(self, task, problemid, content, translations)
-        self._answer = str(content.get("answer", ""))
+        self._default = str(content.get("default", ""))
 
     @classmethod
     def get_type(cls):
@@ -84,7 +84,7 @@ class DisplayableElectricalProblem(ElectricalProblem, DisplayableProblem):
 
     def show_input(self, template_helper, language, seed):
         """ Show MatchProblem """
-        return str(DisplayableElectricalProblem.get_renderer(template_helper).electrical(self.get_id()))
+        return str(DisplayableElectricalProblem.get_renderer(template_helper).electrical(self.get_id(), self._default))
 
     @classmethod
     def show_editbox(cls, template_helper, key):
