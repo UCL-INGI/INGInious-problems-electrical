@@ -575,6 +575,18 @@
 		R1.setAttribute('name', 'R1');
 		R1.setAttribute('value', '5');
 		R1.setAttribute('type', 'Resistor');
+		var R3 = doc.createElement('Component');
+		R3.setAttribute('name', 'R3');
+		R3.setAttribute('value', '5');
+		R3.setAttribute('type', 'Resistor');
+		var R4 = doc.createElement('Component');
+		R4.setAttribute('name', 'R4');
+		R4.setAttribute('value', '5');
+		R4.setAttribute('type', 'Resistor');
+		var R5 = doc.createElement('Component');
+		R5.setAttribute('name', 'R5');
+		R5.setAttribute('value', '5');
+		R5.setAttribute('type', 'Resistor');
 		var R2 = doc.createElement('Component');
 		R2.setAttribute('name', 'R2D2');
 		R2.setAttribute('value', '4');
@@ -583,10 +595,14 @@
 		C.setAttribute('name', 'Kappa');
 		C.setAttribute('value', '0.5');
 		C.setAttribute('type', 'Capacitor');
-		var V = doc.createElement('Component');
-		V.setAttribute('name', 'V');
-		V.setAttribute('value', '10');
-		V.setAttribute('type', 'Voltage');
+		var V1 = doc.createElement('Component');
+		V1.setAttribute('name', 'V1');
+		V1.setAttribute('value', '10');
+		V1.setAttribute('type', 'Voltage');
+		var V2 = doc.createElement('Component');
+		V2.setAttribute('name', 'V2');
+		V2.setAttribute('value', '10');
+		V2.setAttribute('type', 'Voltage');
 		var G = doc.createElement('Ground');
 
 		try
@@ -595,15 +611,25 @@
             mxVertexHandler.prototype.rotationEnabled = true;
 			// TODO : v1 v4 ou v4 v1 change la courbure des edges
             parent = graph.getDefaultParent();
-			var v1 = graph.insertVertex(parent, null, R1, 50, 100, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
-			var v2 = graph.insertVertex(parent, null, R2, 100, 100, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
-			var v3 = graph.insertVertex(parent, null, V, 10, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');
-			var v4 = graph.insertVertex(parent, null, G, 80, 170, 20, 20,  'shape=Signal Ground;');
-			var e1 = graph.insertEdge(parent, null, null, v1, v3, 'sourcePort=in;entryPerimeter=0;targetPort=N');
-			var e2 = graph.insertEdge(parent, null, null, v1, v3, 'sourcePort=out;entryPerimeter=0;targetPort=S');
+			var v1 = graph.insertVertex(parent, null, R1, 50, 200, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
+			var v2 = graph.insertVertex(parent, null, R2, 100, 200, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
+			var v3 = graph.insertVertex(parent, null, R3, 50, 100, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=0;');
+			var v4 = graph.insertVertex(parent, null, R4, 200, 50, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
+			var v5 = graph.insertVertex(parent, null, R5, 20, 75, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
+			var v6 = graph.insertVertex(parent, null, V1, 100, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;rotation=0;');
+			var v7 = graph.insertVertex(parent, null, V2, 10, 10, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');
+			var v8 = graph.insertVertex(parent, null, G, 80, 170, 20, 20,  'shape=Signal Ground;');
+			var e1 = graph.insertEdge(parent, null, null, v1, v6, 'sourcePort=in;entryPerimeter=0;targetPort=N');
+			var e2 = graph.insertEdge(parent, null, null, v1, v6, 'sourcePort=out;entryPerimeter=0;targetPort=S');
 			var e3 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=in;entryPerimeter=0;targetPort=in');
 			var e4 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=out;entryPerimeter=0;targetPort=out');
-			var e5 = graph.insertEdge(parent, null, null, v1, v4, 'sourcePort=out;entryPerimeter=0;targetPort=N');
+			var e5 = graph.insertEdge(parent, null, null, v1, v8, 'sourcePort=out;entryPerimeter=0;targetPort=N');
+			var e6 = graph.insertEdge(parent, null, null, v1, v3, 'sourcePort=in;entryPerimeter=0;targetPort=in');
+			var e7 = graph.insertEdge(parent, null, null, v1, v3, 'sourcePort=in;entryPerimeter=0;targetPort=out');
+			var e8 = graph.insertEdge(parent, null, null, v3, v7, 'sourcePort=in;entryPerimeter=0;targetPort=S');
+			var e9 = graph.insertEdge(parent, null, null, v4, v7, 'sourcePort=in;entryPerimeter=0;targetPort=N');
+			var e10 = graph.insertEdge(parent, null, null, v4, v5, 'sourcePort=out;entryPerimeter=0;targetPort=in');
+			var e11= graph.insertEdge(parent, null, null, v5, v3, 'sourcePort=out;entryPerimeter=0;targetPort=out');
             mxVertexHandler.prototype.rotationEnabled = false;
 		}
 		finally
@@ -622,7 +648,7 @@
 	<tr>
 		<td>
 			<div id="graphContainer"
-				style="overflow:hidden;width:321px;height:241px;cursor:default;left:120px">
+				style="overflow:hidden;width:1440px;height:720px;cursor:default;left:120px">
 			</div>
 		</td>
 		<td valign="top">

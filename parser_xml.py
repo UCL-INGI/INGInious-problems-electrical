@@ -1,8 +1,9 @@
 import xml.etree.ElementTree as ET
 from string import *
-tree = ET.parse('lol.xml')
+import sys
+tree = ET.parse(sys.argv[1])
 root = tree.getroot().find('root')
-my_file = open("circuitSpice.cir", 'w')
+my_file = open("circuit.cir", 'w')
 my_file.write("Spice circuit Gen\n\n")
 
 

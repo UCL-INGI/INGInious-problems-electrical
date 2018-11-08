@@ -1,17 +1,26 @@
 Spice circuit Gen
 
-R1 0 w1 5
-R2D2 0 w0 4
-V w0 w1 10
+R1 n1 0 5
+R2D2 n1 0 4
+R3 n1 n1 5
+R4 n3 n4 5
+R5 n4 n1 5
+V1 n1 0 10
+V2 n3 n1 10
 .options savecurrents
 
 .control
 op
 print V(w0)
 print V(w1)
+print V(w2)
 print @R1[i]
 print @R2D2[i]
-print I(V)
+print @R3[i]
+print @R4[i]
+print @R5[i]
+print I(V1)
+print I(V2)
 exit
 .endc
 .end
