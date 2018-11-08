@@ -3,76 +3,35 @@
     <mxCell id="0"/>
     <mxCell id="1" parent="0"/>
     <Component name="R1" value="5" type="Resistor" id="2">
-      <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;" vertex="1" parent="1">
-        <mxGeometry x="50" y="200" width="80" height="30" as="geometry"/>
+      <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
+        <mxGeometry x="70" y="30" width="80" height="30" as="geometry"/>
       </mxCell>
     </Component>
     <Component name="R2D2" value="4" type="Resistor" id="3">
-      <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;" vertex="1" parent="1">
-        <mxGeometry x="100" y="200" width="80" height="30" as="geometry"/>
+      <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
+        <mxGeometry x="70" y="170" width="80" height="30" as="geometry"/>
       </mxCell>
     </Component>
-    <Component name="R3" value="5" type="Resistor" id="4">
-      <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=0;" vertex="1" parent="1">
-        <mxGeometry x="110" y="140" width="80" height="30" as="geometry"/>
-      </mxCell>
-    </Component>
-    <Component name="R4" value="5" type="Resistor" id="5">
-      <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;" vertex="1" parent="1">
-        <mxGeometry x="200" y="50" width="80" height="30" as="geometry"/>
-      </mxCell>
-    </Component>
-    <Component name="R5" value="5" type="Resistor" id="6">
-      <mxCell style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;" vertex="1" parent="1">
-        <mxGeometry x="230" y="140" width="80" height="30" as="geometry"/>
-      </mxCell>
-    </Component>
-    <Component name="V1" value="10" type="Voltage" id="7">
-      <mxCell style="shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;rotation=0;" vertex="1" parent="1">
-        <mxGeometry y="200" width="40" height="40" as="geometry"/>
-      </mxCell>
-    </Component>
-    <Component name="V2" value="10" type="Voltage" id="8">
+    <Component name="V" value="10" type="Voltage" id="4">
       <mxCell style="shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
-        <mxGeometry x="60" y="70" width="40" height="40" as="geometry"/>
+        <mxGeometry x="40" y="100" width="40" height="40" as="geometry"/>
       </mxCell>
     </Component>
-    <Ground id="9">
+    <Ground id="5">
       <mxCell style="shape=Signal Ground;" vertex="1" parent="1">
-        <mxGeometry x="150" y="310" width="20" height="20" as="geometry"/>
+        <mxGeometry x="210" y="200" width="20" height="20" as="geometry"/>
       </mxCell>
     </Ground>
-    <mxCell id="10" style="sourcePort=in;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="2" target="7">
+    <mxCell id="6" style="sourcePort=out;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="2" target="5">
       <mxGeometry relative="1" as="geometry"/>
     </mxCell>
-    <mxCell id="11" style="sourcePort=out;entryPerimeter=0;targetPort=S" edge="1" parent="1" source="2" target="7">
+    <mxCell id="7" style="sourcePort=out;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="3" target="5">
       <mxGeometry relative="1" as="geometry"/>
     </mxCell>
-    <mxCell id="12" style="sourcePort=in;entryPerimeter=0;targetPort=in" edge="1" parent="1" source="2" target="3">
+    <mxCell id="8" style="sourcePort=in;entryPerimeter=0;targetPort=S" edge="1" parent="1" source="3" target="4">
       <mxGeometry relative="1" as="geometry"/>
     </mxCell>
-    <mxCell id="13" style="sourcePort=out;entryPerimeter=0;targetPort=out" edge="1" parent="1" source="2" target="3">
-      <mxGeometry relative="1" as="geometry"/>
-    </mxCell>
-    <mxCell id="14" style="sourcePort=out;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="2" target="9">
-      <mxGeometry relative="1" as="geometry"/>
-    </mxCell>
-    <mxCell id="15" style="sourcePort=in;entryPerimeter=0;targetPort=in" edge="1" parent="1" source="2" target="4">
-      <mxGeometry relative="1" as="geometry"/>
-    </mxCell>
-    <mxCell id="16" style="sourcePort=in;entryPerimeter=0;targetPort=out" edge="1" parent="1" source="2" target="4">
-      <mxGeometry relative="1" as="geometry"/>
-    </mxCell>
-    <mxCell id="17" style="sourcePort=in;entryPerimeter=0;targetPort=S" edge="1" parent="1" source="4" target="8">
-      <mxGeometry relative="1" as="geometry"/>
-    </mxCell>
-    <mxCell id="18" style="sourcePort=in;entryPerimeter=0;targetPort=N" edge="1" parent="1" source="5" target="8">
-      <mxGeometry relative="1" as="geometry"/>
-    </mxCell>
-    <mxCell id="19" style="sourcePort=out;entryPerimeter=0;targetPort=in" edge="1" parent="1" source="5" target="6">
-      <mxGeometry relative="1" as="geometry"/>
-    </mxCell>
-    <mxCell id="20" style="sourcePort=out;entryPerimeter=0;targetPort=out" edge="1" parent="1" source="6" target="4">
+    <mxCell id="9" style="sourcePort=N;entryPerimeter=0;targetPort=in" edge="1" parent="1" source="4" target="2">
       <mxGeometry relative="1" as="geometry"/>
     </mxCell>
   </root>
