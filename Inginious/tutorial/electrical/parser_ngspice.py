@@ -10,7 +10,7 @@ def main():
 		letters = list(word) 
 		if(len(letters) > 2 and letters[0] == 'i' and letters[1] == '(') :
 			result = tokens[i+2]
-			if(float(result) == 1):
+			if(abs(float(result)) == 1):
 				print("True")
 			else:
 				print("False")

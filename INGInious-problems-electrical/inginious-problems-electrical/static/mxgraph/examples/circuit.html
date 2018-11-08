@@ -311,7 +311,11 @@
 			document.body.appendChild(mxUtils.button('Delete', function()
 			{
 				graph.removeCells();
-			}));            
+			})); 
+            document.addEventListener('keydown', function (e) {
+                if(e.key == "Delete") 
+                    graph.removeCells();
+            }, false);           
             
 			}
 			/**

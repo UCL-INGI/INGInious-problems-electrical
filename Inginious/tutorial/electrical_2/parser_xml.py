@@ -20,7 +20,7 @@ for child in root.findall('mxCell'):
 		edge["marked"] = True
 		listEdge.append(edge)
 
-cnt = 1;
+
 listNode =[]
 for edge in listEdge:
 	src = edge.get('source')
@@ -60,23 +60,20 @@ for child in root.findall('Component'):
 	component['name'] = child.attrib.get('name')
 	component['value'] = child.attrib.get('value')
 	c = 0
+	cnt = 1
 	for node in list_n:
 		if child.attrib.get('id') in node:
-			n = cnt
 			if ground_id in node:
 				n = 0
 			else:
-
-				n = c + 1
+				n = cnt
 			if listNode[c][node.index(child.attrib.get('id'))][1] == 'i' or  listNode[c][node.index(child.attrib.get('id'))][1]  == 'N' :
 				component['node1'] = n
 			else:
-
 				component['node2'] = n
 		c = c + 1
 		if ground_id not in node:
 			cnt = cnt + 1
-	cnt = 0
 	listComponent.append(component)
 
 for node in listComponent:
@@ -100,7 +97,7 @@ my_file.write(".control\n")
 my_file.write("op\n")
 
 for i in range(len(list_n) - 1):
-	my_file.write('print V(w%s)\n' % (i))
+	my_file.write('print V(w%s)\n' % (i+1))
 
 
 
