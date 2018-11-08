@@ -79,9 +79,21 @@ for child in root.findall('Component'):
 	cnt = 0
 	listComponent.append(component)
 
+for node in listComponent:
+	if node.get('node2') is None:
+		node['node2'] = node.get('node1')
 	
 for node in listComponent:
-	my_file.write('%s n%s n%s %s\n' % (node.get('name'), node.get('node1'), node.get('node2'), node.get('value')))
+	if node.get('node1') == 0 and node.get('node2') == 0 :
+		my_file.write('%s %s %s %s\n' % (node.get('name'), node.get('node1'), node.get('node2'), node.get('value')))
+	elif node.get('node1') == 0 :
+		my_file.write('%s %s n%s %s\n' % (node.get('name'), node.get('node1'), node.get('node2'), node.get('value')))
+	elif node.get('node2') == 0 :
+		my_file.write('%s n%s %s %s\n' % (node.get('name'), node.get('node1'), node.get('node2'), node.get('value')))
+	else:
+		my_file.write('%s n%s n%s %s\n' % (node.get('name'), node.get('node1'), node.get('node2'), node.get('value')))
+		
+	
 
 my_file.write(".options savecurrents\n\n")
 my_file.write(".control\n")
