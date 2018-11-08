@@ -20,7 +20,7 @@ for child in root.findall('mxCell'):
 		edge["marked"] = True
 		listEdge.append(edge)
 
-cnt = 1;
+cnt = 0;
 listNode =[]
 for edge in listEdge:
 	src = edge.get('source')
@@ -52,36 +52,20 @@ ground = root.find('Ground')
 ground_id = ground.attrib.get('id')
 
 
-
-listComponent = []
-
 for child in root.findall('Component'):
-	component = {}
-	component['name'] = child.attrib.get('name')
-	component['value'] = child.attrib.get('value')
-	c = 0
+	my_file.write('%s' % (child.attrib.get('name')))
 	for node in list_n:
 		if child.attrib.get('id') in node:
-			n = cnt
 			if ground_id in node:
-				n = 0
+				my_file.write(' 0')
 			else:
-
-				n = c + 1
-			if listNode[c][node.index(child.attrib.get('id'))][1] == 'i' or  listNode[c][node.index(child.attrib.get('id'))][1]  == 'N' :
-				component['node1'] = n
-			else:
-
-				component['node2'] = n
-		c = c + 1
+				my_file.write( ' w%s' % (cnt))
 		if ground_id not in node:
 			cnt = cnt + 1
-	cnt = 0
-	listComponent.append(component)
 
-	
-for node in listComponent:
-	my_file.write('%s w%s w%s %s\n' % (node.get('name'), node.get('node1'), node.get('node2'), node.get('value')))
+	my_file.write(' %s\n' % (child.attrib.get('value')))
+
+	cnt = 0
 
 my_file.write(".options savecurrents\n\n")
 my_file.write(".control\n")
