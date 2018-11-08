@@ -260,12 +260,10 @@
 				});
 
                 // add component to the toolbar
-                var addVertex = function(icon, w, h, style)
+                var addVertex = function(icon, w, h, style, type, counter)
 				{
-					var vertex = new mxCell(null, new mxGeometry(0, 0, w, h), style);
-					vertex.setVertex(true);
 				
-					var img = addToolbarItem(graph, toolbar, vertex, icon);
+					var img = addToolbarItem(graph, toolbar, icon, doc, w, h, style, type, counter);
 					img.enabled = true;
 					
 					graph.getSelectionModel().addListener(mxEvent.CHANGE, function()
@@ -287,17 +285,19 @@
 				tbContainer.style.bottom = '0px';
 				
 				document.body.appendChild(tbContainer);
+                var doc = mxUtils.createXmlDocument();
 			
 				// Creates new toolbar without event processing
 				var toolbar = new mxToolbar(tbContainer);
 				toolbar.enabled = false
-                addVertex('resistor.png', 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;');
-                addVertex('capacitor.png', 80, 40, 'shape=Capacitor 1;verticalLabelPosition=top;verticalAlign=bottom;');
-                addVertex('voltage.png', 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');		
-                addVertex('inductor.png', 80, 40, 'shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;');			
+                var counter = [0, 0, 0, 0] // counts for Resistor, Capacitor, Voltage and Inductor
+                addVertex('resistor.png', 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Resistor', counter);
+                addVertex('capacitor.png', 80, 40, 'shape=Capacitor 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Capacitor', counter);
+                addVertex('voltage.png', 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Voltage', counter);		
+                addVertex('inductor.png', 80, 40, 'shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;', 'Inductor', counter);			
 
                 // create the circuit
-				createCircuit(graph);
+				createCircuit(graph, doc);
 			    
 				// Implements a properties panel that uses
 				// mxCellAttributeChange to change properties
@@ -306,6 +306,13 @@
 					selectionChanged(graph);
 				});
 				selectionChanged(graph);
+            
+            // Delete the selected cells
+			document.body.appendChild(mxUtils.button('Delete', function()
+			{
+				graph.removeCells();
+			}));            
+            
 			}
 			/**
 			 * Updates the properties panel
@@ -395,21 +402,44 @@
 			}
 		};
 
-    function addToolbarItem(graph, toolbar, prototype, image)
+    function addToolbarItem(graph, toolbar, image, doc, w, h, style, type, counter)
 		{
 			// Function that is executed when the image is dropped on
 			// the graph. The cell argument points to the cell under
 			// the mousepointer if there is one.
 			var funct = function(graph, evt, cell, x, y)
 			{
-				graph.stopEditing(false);
+				graph.stopEditing(false);  
 
-				var vertex = graph.getModel().cloneCell(prototype);
-				vertex.geometry.x = x;
-				vertex.geometry.y = y;                
-					
-				graph.addCell(vertex);
-				graph.setSelectionCell(vertex);
+                var name = type[0]
+                switch(name) {
+                    case 'R':
+                        counter[0]++
+                        name += counter[0]
+                        break;
+                    case 'C':
+                        counter[1]++
+                        name += counter[1]
+                        break;
+                    case 'V':
+                        counter[2]++
+                        name += counter[2]
+                        break;
+                    case 'I':
+                        counter[3]++
+                        name += counter[3]
+                        break;
+                    default:
+                        console.log("name unknown")
+                } 
+
+                var c = doc.createElement('Component');
+		        c.setAttribute('name', name);
+		        c.setAttribute('value', '0');
+		        c.setAttribute('type', type);        
+                parent = graph.getDefaultParent();
+			    var v = graph.insertVertex(parent, null, c, x, y, w, h, style);    
+				graph.setSelectionCell(v);
 			}
 			
 			// Creates the image which is used as the drag icon (preview)
@@ -569,7 +599,7 @@
 	</script>
 
 	<script type="text/javascript">
-	function createCircuit(graph){
+	function createCircuit(graph, doc){
         var doc = mxUtils.createXmlDocument();
 		var R1 = doc.createElement('Component');
 		R1.setAttribute('name', 'R1');
@@ -648,14 +678,14 @@
 	<tr>
 		<td>
 			<div id="graphContainer"
-				style="overflow:hidden;width:1440px;height:720px;cursor:default;left:120px">
+				style="overflow:hidden;width:700px;height:400px;cursor:default;left:120px">
 			</div>
 		</td>
-		<td valign="top">
-			<div id="properties"
-				style="padding: 10px;">
+        <td align='top'>
+            <div id="properties"
+				style="padding:10px;position:absolute;">
 			</div>
-		</td>
+        </td>
 	</tr>
 	</table>
 </body>
