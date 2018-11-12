@@ -27,24 +27,6 @@ function old_submission(container, xmlText)
 				mxEvent.disableContextMenu(container);
 				
 				var doc = mxUtils.createXmlDocument();
-				
-				var R1 = doc.createElement('Component');
-				R1.setAttribute('name', 'R1');
-				R1.setAttribute('value', '5');
-				R1.setAttribute('type', 'Resistor');
-				var R2 = doc.createElement('Component');
-				R2.setAttribute('name', 'R2D3');
-				R2.setAttribute('value', '4');
-				R2.setAttribute('type', 'Resistor');
-				var C = doc.createElement('Component');
-				C.setAttribute('name', 'Kappa');
-				C.setAttribute('value', '0.5');
-				C.setAttribute('type', 'Capacitor');
-				var V = doc.createElement('Component');
-				V.setAttribute('name', 'V');
-				V.setAttribute('value', '10');
-				V.setAttribute('type', 'Voltage');
-				var G = doc.createElement('Ground');
 
 				//The list of xml files
 				var stencilsFile = new Array("resistors.xml","signal_sources.xml") 

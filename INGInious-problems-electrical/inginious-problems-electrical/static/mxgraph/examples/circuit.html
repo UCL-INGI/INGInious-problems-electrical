@@ -36,16 +36,7 @@
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
                 graph.setConnectable(true);
-                new mxKeyHandler(graph);
-                
-                // Adds an option to view the XML of the graph
-				document.body.appendChild(mxUtils.button('View XML', function()
-				{
-					var encoder = new mxCodec();
-					var node = encoder.encode(graph.getModel());
-					mxUtils.popup(mxUtils.getPrettyXml(node), true);
-				}));
-                
+                new mxKeyHandler(graph);                
                 
                 // Overrides method to disallow edge label editing
 				graph.isCellEditable = function(cell)
@@ -306,12 +297,24 @@
 					selectionChanged(graph);
 				});
 				selectionChanged(graph);
+
+            // Adds an option to view the XML of the graph
+            var xmlButton = mxUtils.button('View XML', function()
+	        {
+		        var encoder = new mxCodec();
+		        var node = encoder.encode(graph.getModel());
+		        mxUtils.popup(mxUtils.getPrettyXml(node), true);
+	        })
+            xmlButton.style.position = 'relative';
+	        document.body.appendChild(xmlButton);
             
             // Delete the selected cells
-			document.body.appendChild(mxUtils.button('Delete', function()
+            var deleteButton = mxUtils.button('Delete', function()
 			{
 				graph.removeCells();
-			})); 
+			})
+            deleteButton.style.position = 'relative';
+			document.body.appendChild(deleteButton);
             document.addEventListener('keydown', function (e) {
                 if(e.key == "Delete") 
                     graph.removeCells();
@@ -645,14 +648,14 @@
             mxVertexHandler.prototype.rotationEnabled = true;
 			// TODO : v1 v4 ou v4 v1 change la courbure des edges
             parent = graph.getDefaultParent();
-			var v1 = graph.insertVertex(parent, null, R1, 50, 200, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
-			var v2 = graph.insertVertex(parent, null, R2, 100, 200, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
-			var v3 = graph.insertVertex(parent, null, R3, 50, 100, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=0;');
+			var v1 = graph.insertVertex(parent, null, R1, 260, 240, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
+			var v2 = graph.insertVertex(parent, null, R2, 360, 240, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
+			var v3 = graph.insertVertex(parent, null, R3, 130, 180, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=0;');
 			var v4 = graph.insertVertex(parent, null, R4, 200, 50, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
-			var v5 = graph.insertVertex(parent, null, R5, 20, 75, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
-			var v6 = graph.insertVertex(parent, null, V1, 100, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;rotation=0;');
-			var v7 = graph.insertVertex(parent, null, V2, 10, 10, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');
-			var v8 = graph.insertVertex(parent, null, G, 80, 170, 20, 20,  'shape=Signal Ground;');
+			var v5 = graph.insertVertex(parent, null, R5, 200, 130, 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;rotation=90;');
+			var v6 = graph.insertVertex(parent, null, V1, 200, 240, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;rotation=0;');
+			var v7 = graph.insertVertex(parent, null, V2, 50, 100, 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;');
+			var v8 = graph.insertVertex(parent, null, G, 240, 340, 20, 20,  'shape=Signal Ground;');
 			var e1 = graph.insertEdge(parent, null, null, v1, v6, 'sourcePort=in;entryPerimeter=0;targetPort=N');
 			var e2 = graph.insertEdge(parent, null, null, v1, v6, 'sourcePort=out;entryPerimeter=0;targetPort=S');
 			var e3 = graph.insertEdge(parent, null, null, v1, v2, 'sourcePort=in;entryPerimeter=0;targetPort=in');
