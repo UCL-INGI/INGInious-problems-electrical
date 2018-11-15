@@ -9,13 +9,16 @@ $#
 	<table style="position:relative;">
 	<tr>
 		<td>
+            <div id="tbContainer"
+                style="position:absolute;overflow:hidden;padding:2px;left:0px;top:0px;width:100px;bottom:0px">            
+            </div>
 			<div id="graphContainer"
-				style="overflow:hidden;width:321px;height:241px;cursor:default;">
+				style="overflow:hidden;width:500px;height:400px;cursor:default;left:120px">
 			</div>
 		</td>
 		<td valign="top">
 			<div id="properties"
-				style="padding: 10px;">
+				style="padding: 10px;position:absolute;">
 			</div>
 		</td>
 	</tr>
@@ -37,7 +40,7 @@ $#
 				// Disables the built-in context menu
 				mxEvent.disableContextMenu(container);
 				//The list of xml files
-				var stencilsFile = new Array("resistors.xml","signal_sources.xml") 
+				var stencilsFile = new Array("resistors.xml","signal_sources.xml", "capacitors.xml", "inductors.xml") 
 				
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
@@ -137,6 +140,11 @@ $#
 			    {
 			        return false;
 			    };
+                // Allow connection between two port with the same name (ex: IN-IN or OUT-OUT)
+                graph.connectionHandler.checkConstraints = function(c1, c2)
+			    {
+			        return true;
+			    };
 			    mxEdgeHandler.prototype.isConnectableCell = function(cell)
 			    {
 				    return graph.connectionHandler.isConnectableCell(cell);
@@ -147,40 +155,7 @@ $#
 			    {
 				    return terminal;
 			    };
-                // Returns all possible ports for a given terminal
-			    graph.getAllConnectionConstraints = function(terminal, source)
-			    {
-				    if (terminal != null && terminal.shape != null &&
-					    terminal.shape.stencil != null)
-				    {
-					    // for stencils with existing constraints...
-					    if (terminal.shape.stencil != null)
-					    {
-						    return terminal.shape.stencil.constraints;
-					    }
-				    }
-				    else if (terminal != null && this.model.isVertex(terminal.cell))
-				    {
-					    if (terminal.shape != null)
-					    {
-						    var ports = terminal.shape.getPorts();
-						    var cstrs = new Array();
-						
-						    for (var id in ports)
-						    {
-							    var port = ports[id];
-							
-							    var cstr = new mxConnectionConstraint(new mxPoint(port.x, port.y), port.perimeter);
-							    cstr.id = id;
-							    cstrs.push(cstr);
-						    }
-						
-						    return cstrs;
-					    }
-				    }
-				
-				    return null;
-			    };
+                
 			
 			    // Sets the port for the given connection
 			    graph.setConnectionConstraint = function(edge, terminal, source, constraint)
@@ -189,13 +164,13 @@ $#
 				    {
 					    var key = (source) ? mxConstants.STYLE_SOURCE_PORT : mxConstants.STYLE_TARGET_PORT;
 					
-					    if (constraint == null || constraint.id == null)
+					    if (constraint == null || constraint.name == null)
 					    {
 						    this.setCellStyles(key, null, [edge]);
 					    }
-					    else if (constraint.id != null)
+					    else if (constraint.name != null)
 					    {
-						    this.setCellStyles(key, constraint.id, [edge]);
+						    this.setCellStyles(key, constraint.name, [edge]);
 					    }
 				    }
 			    };
@@ -260,6 +235,30 @@ $#
 				    }
 			    });
 
+                // add component to the toolbar
+                var addVertex = function(icon, w, h, style, type, counter)
+				{
+				
+					var img = addToolbarItem(graph, toolbar, icon, doc, w, h, style, type, counter);
+					img.enabled = true;
+					
+					graph.getSelectionModel().addListener(mxEvent.CHANGE, function()
+					{
+						var tmp = graph.isSelectionEmpty();
+						img.enabled = tmp;
+					});
+				};
+			
+				// Creates new toolbar without event processing
+				var toolbar = new mxToolbar(tbContainer);
+				toolbar.enabled = false
+                var counter = [0, 0, 0, 0] // counts for Resistor, Capacitor, Voltage and Inductor
+                var doc = mxUtils.createXmlDocument();
+                addVertex('images/resistor.png', 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Resistor', counter);
+                addVertex('images/capacitor.png', 80, 40, 'shape=Capacitor 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Capacitor', counter);
+                addVertex('images/voltage.png', 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Voltage', counter);		
+                addVertex('images/inductor.png', 80, 40, 'shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;', 'Inductor', counter);
+
                 mxVertexHandler.prototype.rotationEnabled = true; 
                 // create graph from the default xml
                 var xmlText = `$:default`;
@@ -277,6 +276,12 @@ $#
 					selectionChanged(graph);
 				});
 				selectionChanged(graph);
+
+                // Delete the selected cells (keyboard delete)
+                document.addEventListener('keydown', function (e) {
+                    if(e.key == "Delete") 
+                        graph.removeCells();
+                }, false);  
 			}
 			/**
 			 * Updates the properties panel
@@ -365,6 +370,76 @@ $#
 				}
 			}
 		};
+
+    function addToolbarItem(graph, toolbar, image, doc, w, h, style, type, counter)
+	{
+		// Function that is executed when the image is dropped on
+		// the graph. The cell argument points to the cell under
+		// the mousepointer if there is one.
+		var funct = function(graph, evt, cell, x, y)
+		{
+			graph.stopEditing(false);  
+
+            var name = type[0]
+            switch(name) {
+                case 'R':
+                    counter[0]++
+                    name += counter[0]
+                    break;
+                case 'C':
+                    counter[1]++
+                    name += counter[1]
+                    break;
+                case 'V':
+                    counter[2]++
+                    name += counter[2]
+                    break;
+                case 'I':
+                    counter[3]++
+                    name += counter[3]
+                    break;
+                default:
+                    console.log("name unknown")
+            } 
+
+            var c = doc.createElement('Component');
+	        c.setAttribute('name', name);
+	        c.setAttribute('value', '0');
+	        c.setAttribute('type', type);        
+            parent = graph.getDefaultParent();
+		    var v = graph.insertVertex(parent, null, c, x, y, w, h, style);    
+			graph.setSelectionCell(v);
+		}
+		
+		// Creates the image which is used as the drag icon (preview)
+		var img = toolbar.addMode(null, image, function(evt, cell)
+		{
+			var pt = this.graph.getPointForEvent(evt);
+			funct(graph, evt, cell, pt.x, pt.y);
+		});
+		
+		// Disables dragging if element is disabled. This is a workaround
+		// for wrong event order in IE. Following is a dummy listener that
+		// is invoked as the last listener in IE.
+		mxEvent.addListener(img, 'mousedown', function(evt)
+		{
+			// do nothing
+		});
+		
+		// This listener is always called first before any other listener
+		// in all browsers.
+		mxEvent.addListener(img, 'mousedown', function(evt)
+		{
+			if (img.enabled == false)
+			{
+				mxEvent.consume(evt);
+			}
+		});
+					
+		mxUtils.makeDraggable(img, graph, funct);
+		
+		return img;
+	}
 		
 	mxEdgeStyle.WireConnector = function(state, source, target, hints, result)
 	{

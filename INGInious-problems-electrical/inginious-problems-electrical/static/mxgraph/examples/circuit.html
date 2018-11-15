@@ -249,10 +249,10 @@
 				var toolbar = new mxToolbar(tbContainer);
 				toolbar.enabled = false
                 var counter = [0, 0, 0, 0] // counts for Resistor, Capacitor, Voltage and Inductor
-                addVertex('resistor.png', 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Resistor', counter);
-                addVertex('capacitor.png', 80, 40, 'shape=Capacitor 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Capacitor', counter);
-                addVertex('voltage.png', 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Voltage', counter);		
-                addVertex('inductor.png', 80, 40, 'shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;', 'Inductor', counter);			
+                addVertex('images/resistor.png', 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Resistor', counter);
+                addVertex('images/capacitor.png', 80, 40, 'shape=Capacitor 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Capacitor', counter);
+                addVertex('images/voltage.png', 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Voltage', counter);		
+                addVertex('images/inductor.png', 80, 40, 'shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;', 'Inductor', counter);			
 
                 // create the circuit
 				createCircuit(graph, doc);

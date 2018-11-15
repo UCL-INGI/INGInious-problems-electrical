@@ -25,11 +25,9 @@ function old_submission(container, xmlText)
 			{
 				// Disables the built-in context menu
 				mxEvent.disableContextMenu(container);
-				
-				var doc = mxUtils.createXmlDocument();
 
 				//The list of xml files
-				var stencilsFile = new Array("resistors.xml","signal_sources.xml") 
+				var stencilsFile = new Array("resistors.xml","signal_sources.xml", "capacitors.xml", "inductors.xml") 
 				
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
@@ -138,40 +136,6 @@ function old_submission(container, xmlText)
 			    graph.view.getTerminalPort = function(state, terminal, source)
 			    {
 				    return terminal;
-			    };
-                // Returns all possible ports for a given terminal
-			    graph.getAllConnectionConstraints = function(terminal, source)
-			    {
-				    if (terminal != null && terminal.shape != null &&
-					    terminal.shape.stencil != null)
-				    {
-					    // for stencils with existing constraints...
-					    if (terminal.shape.stencil != null)
-					    {
-						    return terminal.shape.stencil.constraints;
-					    }
-				    }
-				    else if (terminal != null && this.model.isVertex(terminal.cell))
-				    {
-					    if (terminal.shape != null)
-					    {
-						    var ports = terminal.shape.getPorts();
-						    var cstrs = new Array();
-						
-						    for (var id in ports)
-						    {
-							    var port = ports[id];
-							
-							    var cstr = new mxConnectionConstraint(new mxPoint(port.x, port.y), port.perimeter);
-							    cstr.id = id;
-							    cstrs.push(cstr);
-						    }
-						
-						    return cstrs;
-					    }
-				    }
-				
-				    return null;
 			    };
 			
 			    // Sets the port for the given connection
