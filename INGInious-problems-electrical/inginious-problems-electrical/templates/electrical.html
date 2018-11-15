@@ -254,10 +254,10 @@ $#
 				toolbar.enabled = false
                 var counter = [0, 0, 0, 0] // counts for Resistor, Capacitor, Voltage and Inductor
                 var doc = mxUtils.createXmlDocument();
-                addVertex('images/resistor.png', 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Resistor', counter);
-                addVertex('images/capacitor.png', 80, 40, 'shape=Capacitor 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Capacitor', counter);
-                addVertex('images/voltage.png', 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Voltage', counter);		
-                addVertex('images/inductor.png', 80, 40, 'shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;', 'Inductor', counter);
+                addVertex('/plugins/electrical/static/images/resistor.png', 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Resistor', counter);
+                addVertex('/plugins/electrical/static/images/capacitor.png', 80, 40, 'shape=Capacitor 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Capacitor', counter);
+                addVertex('/plugins/electrical/static/images/voltage.png', 40, 40, 'shape=DC Source 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Voltage', counter);		
+                addVertex('/plugins/electrical/static/images/inductor.png', 80, 40, 'shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;', 'Inductor', counter);
 
                 mxVertexHandler.prototype.rotationEnabled = true; 
                 // create graph from the default xml
@@ -281,7 +281,7 @@ $#
                 document.addEventListener('keydown', function (e) {
                     if(e.key == "Delete") 
                         graph.removeCells();
-                }, false);  
+                }, false); 
 			}
 			/**
 			 * Updates the properties panel
