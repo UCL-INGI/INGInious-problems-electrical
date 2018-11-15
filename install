@@ -1,0 +1,9 @@
+sudo su
+
+pip3 uninstall inginious-problems-electrical -y
+
+sudo pip3 install INGInious-problems-electrical/
+
+inginious-webapp
+
+
