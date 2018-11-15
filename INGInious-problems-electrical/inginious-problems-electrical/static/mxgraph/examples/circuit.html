@@ -318,8 +318,26 @@
 							createTextField(graph, form, cell, attrs[i]);
 						}
 					}
-	
+
 					div.appendChild(form.getTable());
+                  
+
+                    var rotateButton = mxUtils.button('Rotate 90', function()
+	                {
+			            var cell = graph.getSelectionCell();
+                        var currentRotation = mxUtils.getValue(graph.view.getState(cell).style,mxConstants.STYLE_ROTATION,0);
+                        if(currentRotation == 90) {
+                            graph.setCellStyles(mxConstants.STYLE_ROTATION, 0, [cell])
+                        }
+                        else {
+                            graph.setCellStyles(mxConstants.STYLE_ROTATION, 90, [cell])
+                        }
+	                })
+                    rotateButton.style.position = 'relative';
+                    rotateButton.style.top = '10px';
+                    rotateButton.style.left = '110px';
+	                div.appendChild(rotateButton);
+
 					mxUtils.br(div);
 				}
 			}
