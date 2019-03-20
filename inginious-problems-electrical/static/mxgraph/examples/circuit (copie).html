@@ -35,7 +35,6 @@
 				
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
-                //graph.setGridEnabled(false)
                 graph.setConnectable(true);
                 new mxKeyHandler(graph);                
                 
@@ -70,10 +69,6 @@
                             else if(cell.getAttribute('type', '') == 'Current') {
                                 return value + 'A';
                             }
-                            else if(cell.getAttribute('type', '') == 'Label') {
-							    var answer = cell.getAttribute('answer', '');
-                                return name + " = " + answer + 'V';
-                            }
                             else {
                                 return name;
                             }
@@ -91,17 +86,12 @@
 			    graph.maximumGraphBounds = new mxRectangle(0, 0, 1800, 1600)
 			    graph.border = 50;
 				var styleV = graph.getStylesheet().getDefaultVertexStyle();
-                styleV[mxConstants.STYLE_FONTSIZE] = 15
-                styleV['fontColor'] = '#000000';
 				styleV['movable'] = '1';
 				styleV['resizable'] = '0';
 				styleV[mxConstants.STYLE_STROKECOLOR] = '#000000';
 				styleV[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
-                styleV[mxConstants.STYLE_STROKEWIDTH] = 1.5;
 				var styleE = graph.getStylesheet().getDefaultEdgeStyle();
 				delete styleE['endArrow'];
-				styleE['strokeColor'] = '#000000'
-                styleE[mxConstants.STYLE_STROKEWIDTH] = 1.5;
 				styleE['movable'] = '1';
 				styleE['resizable'] = '0';
 				styleE['edgeStyle'] = 'wireEdgeStyle';
@@ -148,64 +138,6 @@
 					    }
 				    }
 			    };
-			    
-			    // add node name 
-			    var modeAddNode = false;
-			    var nodeButton = mxUtils.button('Add a node name', function()
-	            {
-		            modeAddNode = true;
-		            modeAddCurrent = false;
-		            changeEdgeColor(graph, "#11CC11")
-	            })
-                nodeButton.style.position = 'relative';
-	            document.body.appendChild(nodeButton);
-	            
-	            graph.addListener(mxEvent.CLICK, function(sender, evt){
-	                var cell = evt.getProperty('cell');
-	                if (cell!=null){
-		                if (cell.edge!=null && cell.edge==1){
-		                    var c = doc.createElement('Component');     
-                            parent = graph.getDefaultParent();
-		                    if (modeAddNode) {
-                                c.setAttribute('name', "V");
-                                c.setAttribute('type', 'Node');   
-                                var v = graph.insertVertex(parent, null, c, sender.lastEvent.layerX-5, sender.lastEvent.layerY-5, 10, 10, 'shape=node;verticalLabelPosition=top;verticalAlign=bottom;fillColor=#000000;');
-                                var e = graph.insertEdge(parent, null, null, v, cell.source, 'sourcePort=N;entryPerimeter=0;targetPort='+cell.getStyle().split(';')[0].split('=')[1]+';');
-                                graph.getModel().beginUpdate();
-                                graph.getModel().setVisible(e, false)
-                                graph.getModel().endUpdate();
-                                modeAddNode = false;
-                                changeEdgeColor(graph, "#000000")
-                            }
-		                }
-	                }
-	                else {
-	                    modeAddNode = false;
-                        changeEdgeColor(graph, "#000000")
-	                }
-	            });
-	            
-	            // add a new equation
-                var nodeButton = mxUtils.button('Add a new equation', function()
-	            {
-	                var div = document.createElement('div')
-	                document.body.appendChild(div)
-	                var equation = document.createTextNode('Equation : ')
-                    var equationBoxLeft = document.createElement('input');
-                    equationBoxLeft.type = 'text';
-                    equationBoxLeft.name = 'equationLeft';
-                    var equal = document.createTextNode('=')
-                    var equationBoxRight = document.createElement('input');
-                    equationBoxRight.type = 'text';
-                    equationBoxRight.name = 'equationRight';
-		            div.appendChild(equation);
-		            div.appendChild(equationBoxLeft);
-		            div.appendChild(equal);
-		            div.appendChild(equationBoxRight);
-	            })
-                nodeButton.style.position = 'relative';
-                nodeButton.addEventListener('click', event => event.preventDefault());
-	            document.body.appendChild(nodeButton);
 			
 			    // Returns the port for the given connection
 			    graph.getConnectionConstraint = function(edge, terminal, source)
@@ -302,14 +234,13 @@
 				// Creates new toolbar without event processing
 				var toolbar = new mxToolbar(tbContainer);
 				toolbar.enabled = false
-                var counts = [counter(graph, 'Resistor')+1, counter(graph, 'Capacitor')+1, counter(graph, 'Voltage')+1, counter(graph, 'Inductor')+1, counter(graph, 'Current')+1, counter(graph, 'Label')+1, counter(graph, 'CurrentLabel')+1]
-                addVertex('images/resistor.png', 80, 20, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Resistor', counts);
+                var counts = [counter(graph, 'Resistor')+1, counter(graph, 'Capacitor')+1, counter(graph, 'Voltage')+1, counter(graph, 'Inductor')+1, counter(graph, 'Current')+1, counter(graph, 'Label')+1]
+                addVertex('images/resistor.png', 80, 30, 'shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Resistor', counts);
                 addVertex('images/capacitor.png', 80, 40, 'shape=Capacitor 1;verticalLabelPosition=top;verticalAlign=bottom;', 'Capacitor', counts);	
-                addVertex('images/inductor.png', 80, 31, 'shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;', 'Inductor', counts);	
-                addVertex('images/voltage.png', 40, 40, 'shape=Dependent Source 3;verticalLabelPosition=top;verticalAlign=bottom;', 'Voltage', counts);	
-                addVertex('images/label.png', 30, 60, 'shape=Label;', 'Label', counts);	
-                addVertex('images/labelCurrent.png', 80, 20, 'shape=CurrentLabel;verticalLabelPosition=top;verticalAlign=bottom;', 'CurrentLabel', counts);	
-                addVertex('images/current.png', 40, 40, 'shape=DC Source 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Current', counts);
+                addVertex('images/inductor.png', 80, 40, 'shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;', 'Inductor', counts);	
+                addVertex('images/voltage.png', 40, 40, 'shape=DC Source 3;verticalLabelPosition=top;verticalAlign=bottom;', 'Voltage', counts);	
+                addVertex('images/label.png', 30, 30, 'shape=Label;', 'Label', counts);				
+                addVertex('images/current.png', 40, 40, 'shape=DC Source 2;verticalLabelPosition=top;verticalAlign=bottom;', 'Current', counts);			
 			    
 				// Implements a properties panel that uses
 				// mxCellAttributeChange to change properties
@@ -354,7 +285,7 @@
 				div.innerHTML = '';
 				// Gets the selection cell
 				var cell = graph.getSelectionCell();
-				if (cell != null && cell.value != null && cell.value.getAttribute('type', '') != "node" && cell.value.nodeName.toLowerCase() == 'component')
+				if (cell != null && cell.value != null && cell.value.nodeName.toLowerCase() == 'component')
 				{
 					// Writes the title
 					var center = document.createElement('center');
@@ -377,46 +308,27 @@
 					}
 
 					div.appendChild(form.getTable());
-
-                    if(cell.value.getAttribute('type', '') == "Label") {
-                        var isQuestion = document.createElement("INPUT");
-                        isQuestion.type = "checkbox";
-                        isQuestion.id = "iQ"
-                        isQuestion.checked = cell.value.getAttribute('isQuestion', '') == "true";
-                        isQuestion.onclick = function() {
-                            if ( this.checked ) {
-                                cell.value.setAttribute('isQuestion', 'true')
-                            } else {
-                                cell.value.setAttribute('isQuestion', 'false')
-                            }
-                        };
-                        
-                        var label = document.createElement('label')
-                        label.htmlFor = "id";
-                        label.appendChild(document.createTextNode('make this label a question'));
-                        
-                        div.appendChild(isQuestion);
-                        div.appendChild(label);
-                    }                  
+                  
 
                     var rotateButton = mxUtils.button('Rotate 90', function()
 	                {
 			            var cell = graph.getSelectionCell();
                         var currentRotation = mxUtils.getValue(graph.view.getState(cell).style,mxConstants.STYLE_ROTATION,0);
                         graph.setCellStyles(mxConstants.STYLE_ROTATION, currentRotation+90, [cell])
-                        
-                        //bug alignement on grid
-                        if(cell.getStyle().split(';')[0] == 'shape=Inductor 5') {
-                            graph.setCellStyles(mxConstants.STYLE_SHAPE, 'Inductor 5V', [cell])
-                        }
-                        else if(cell.getStyle().split(';')[0] == 'shape=Inductor 5V') {
-                            graph.setCellStyles(mxConstants.STYLE_SHAPE, 'Inductor 5', [cell])
-                        }
 	                })
                     rotateButton.style.position = 'relative';
                     rotateButton.style.top = '10px';
                     rotateButton.style.left = '110px';
 	                div.appendChild(rotateButton);
+
+                    /*var rotateButton = mxUtils.button('Test Voltage', function()
+	                {
+			            
+	                })
+                    rotateButton.style.position = 'relative';
+                    rotateButton.style.top = '10px';
+                    rotateButton.style.left = '110px';
+	                div.appendChild(rotateButton);*/
 
 					mxUtils.br(div);
 				}
@@ -473,18 +385,6 @@
 				}
 			}
 		};
-		
-    function changeEdgeColor(graph, color) {
-        var mxcell = Object.values(graph.view.getStates().map)
-        for(var i = 0; i < mxcell.length; i++){
-            if(mxcell[i].cell.edge) {
-                var style = graph.getModel().getStyle(mxcell[i].cell)
-                graph.getModel().beginUpdate();
-                graph.getModel().setStyle(mxcell[i].cell, style+";strokeColor="+color+";");
-                graph.getModel().endUpdate();
-            }
-        }
-    }
 
     function counter(graph, type) {
         var count = 0; 
@@ -505,44 +405,32 @@
 			// the mousepointer if there is one.
 			var funct = function(graph, evt, cell, x, y)
 			{
-				graph.stopEditing(false);                
-                var color;  
+				graph.stopEditing(false);  
 
                 switch(type) {
                     case 'Resistor':
                         name = 'R'+counts[0]
-                        color = '#4500BB';
                         counts[0] += 1
                         break;
                     case 'Capacitor':
                         name = 'C'+counts[1]
-                        color = '#EE44EE';
                         counts[1] += 1
                         break;
                     case 'Voltage':
                         name = 'V'+counts[2]
-                        color = '#C02020';
                         counts[2] += 1
                         break;
                     case 'Inductor':
                         name = 'L'+counts[3]
-                        color = '#990099';
                         counts[3] += 1
                         break;
                     case 'Current':
                         name = 'I'+counts[4]
-                        color = '#8B4513';
                         counts[4] += 1
                         break;
                     case 'Label':
                     	name = 'Label'+counts[5]
-                        color = '#A0A0A0';
                         counts[5] += 1
-                    	break;
-                    case 'CurrentLabel':
-                    	name = 'Current'+counts[6]
-                        color = '#A0A0A0';
-                        counts[6] += 1
                     	break;
                     default:
                         console.log("name unknown")
@@ -557,14 +445,10 @@
                 if(type == 'Voltage') {
                     c.setAttribute('phase', '0');
                 }
-                if(type == 'Label') {
-                    c.setAttribute('answer', '?') 
-                    c.setAttribute('isQuestion', "true")               
-                }
                 c.setAttribute('type', type);        
                 parent = graph.getDefaultParent();
                 var styleV = graph.getStylesheet().getDefaultVertexStyle();
-                var v = graph.insertVertex(parent, null, c, x, y, w, h, style+"strokeColor="+color+";"); 
+                var v = graph.insertVertex(parent, null, c, x, y, w, h, style); 
 		        graph.setSelectionCell(v);
 			}
 			
@@ -601,26 +485,10 @@
 		
 	mxEdgeStyle.WireConnector = function(state, source, target, hints, result)
 	{
-        // if the target is null, delete the wire
-        if(target == null) {
-            return        
-        }
-
 		// Creates array of all way- and terminalpoints
 		var pts = state.absolutePoints;
 		var horizontal = true;
 		var hint = null;
-
-        state.view.graph.orderCells('back', [state.cell])
-        
-        // make edges grey if connected to a label
-        if(target.style.shape == "Label" || source.style.shape == "Label") {
-            state.style.strokeColor = "#A0A0A0"
-            
-        }
-        else {
-            //state.style.strokeColor = "#000000"
-        }
 		
 		// Gets the initial connection from the source terminal or edge
 		if (source != null && state.view.graph.model.isEdge(source.cell))
@@ -736,7 +604,7 @@
 			}
 		}
 		
-		//return mxGraphCreateHandler.apply(this, arguments);
+		return mxGraphCreateHandler.apply(this, arguments);
 	};
 	
 	</script>
@@ -823,12 +691,12 @@
 	<tr>
 		<td>
 			<div id="graphContainer"
-				style="overflow:hidden;width:700px;height:400px;cursor:default;left:120px;background:url('editors/images/grid.gif');">
+				style="overflow:hidden;width:700px;height:400px;cursor:default;left:120px">
 			</div>
 		</td>
         <td align='top'>
             <div id="properties"
-				style="padding:10px;position:absolute;background-color:white;">
+				style="padding:10px;position:absolute;">
 			</div>
         </td>
 	</tr>

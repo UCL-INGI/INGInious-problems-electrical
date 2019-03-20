@@ -302,6 +302,27 @@
         <stroke/>
     </foreground>
 </shape>
+<shape aspect="variable" h="20" name="Impedance" strokewidth="inherit" w="100">
+    <connections>
+        <constraint name="in" perimeter="0" x="0" y="0.5"/>
+        <constraint name="out" perimeter="0" x="1" y="0.5"/>
+    </connections>
+    <foreground>
+        <path>
+            <move x="0" y="10"/>
+            <line x="18" y="10"/>
+            <line x="18" y="20"/>
+            <line x="82" y="20"/>
+            <line x="82" y="10"/>
+            <line x="100" y="10"/>
+            <move x="82" y="10"/>
+            <line x="82" y="0"/>
+            <line x="18" y="0"/>
+            <line x="18" y="10"/>
+        </path>
+        <stroke/>
+    </foreground>
+</shape>
 <shape aspect="variable" h="20" name="Resistor 3" strokewidth="inherit" w="100">
     <connections>
         <constraint name="in" perimeter="0" x="0" y="0.5"/>

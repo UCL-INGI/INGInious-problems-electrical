@@ -2,3 +2,4 @@ include LICENSE
 include README.md
 recursive-include inginious-problems-electrical/static *
 recursive-include inginious-problems-electrical/templates *
+recursive-include inginious-problems-electrical/generator *

@@ -6,6 +6,7 @@
 import os
 import web
 import json
+import sys
 
 from inginious.common.tasks_problems import Problem
 from inginious.frontend.task_problems import DisplayableProblem
@@ -14,10 +15,19 @@ __version__ = "0.1.dev0"
 
 PATH_TO_PLUGIN = os.path.abspath(os.path.dirname(__file__))
 
+sys.path.append(PATH_TO_PLUGIN+'/generator')
+from generator import rand_circuit
+
+
+class ElectricalPage(object):
+	def GET(self, param):
+		nbrCycle, direct, reverse = param.split("&")
+		return rand_circuit(int(nbrCycle), direct, reverse)
+
 
 class StaticMockPage(object):
     # TODO: Replace by shared static middleware and let webserver serve the files
-    def GET(self, path):
+    def GET(self, path):           
         if not os.path.abspath(PATH_TO_PLUGIN) in os.path.abspath(os.path.join(PATH_TO_PLUGIN, path)):
             raise web.notfound()
 
@@ -36,7 +46,10 @@ class ElectricalProblem(Problem):
 
     def __init__(self, task, problemid, content, translations=None):
         Problem.__init__(self, task, problemid, content, translations)
-        self._default = str(content.get("default", ""))
+        self._circuit = str(content.get("circuit", ""))
+        self._input_cycle = str(content.get("input_cycle", ""))
+        self._input_direct = str(content.get("input_direct", ""))
+        self._input_reverse = str(content.get("input_reverse", ""))
 
     @classmethod
     def get_type(cls):
@@ -68,7 +81,7 @@ class ElectricalProblem(Problem):
 
 
 class DisplayableElectricalProblem(ElectricalProblem, DisplayableProblem):
-    """ A displayable match problem """
+    """ A displayable electrical problem """
 
     def __init__(self, task, problemid, content, translations=None):
         ElectricalProblem.__init__(self, task, problemid, content, translations)
@@ -83,8 +96,8 @@ class DisplayableElectricalProblem(ElectricalProblem, DisplayableProblem):
         return template_helper.get_custom_renderer(os.path.join(PATH_TO_PLUGIN, "templates"), False)
 
     def show_input(self, template_helper, language, seed):
-        """ Show MatchProblem """
-        return str(DisplayableElectricalProblem.get_renderer(template_helper).electrical(self.get_id(), self._default))
+        """ Show ElectricalProblem """
+        return str(DisplayableElectricalProblem.get_renderer(template_helper).electrical(self.get_id(), self._circuit, self._input_cycle, self._input_direct, self._input_reverse))
 
     @classmethod
     def show_editbox(cls, template_helper, key):
@@ -98,6 +111,7 @@ class DisplayableElectricalProblem(ElectricalProblem, DisplayableProblem):
 def init(plugin_manager, course_factory, client, plugin_config):
     # TODO: Replace by shared static middleware and let webserver serve the files
 	plugin_manager.add_page('/plugins/electrical/static/(.+)', StaticMockPage)
+	plugin_manager.add_page('/plugins/electrical/generator/(.+)', ElectricalPage)
 	plugin_manager.add_hook("javascript_header", lambda: "/plugins/electrical/static/mxgraph/mxClient.min.js")
 	plugin_manager.add_hook("javascript_header", lambda: "/plugins/electrical/static/electrical.js")
 	course_factory.get_task_factory().add_problem_type(DisplayableElectricalProblem)

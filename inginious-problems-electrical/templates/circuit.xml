@@ -1,0 +1,64 @@
+<mxGraphModel>
+  <root>
+	<mxCell id="0"/>
+	<mxCell id="1" parent="0"/>
+	{% for item in components %}
+	{% if item.id != idGround %}
+	<Component {% if item.type != 'Impedance' %} value="{{item.value}}" {% endif %} type="{{item.type}}" id="{{item.id}}" 
+		{% if item.type == 'Voltage' or item.type == 'Current' %} phase="{{item.phase}}" {% endif %}
+		{% if item.type == 'DependentVoltage' or item.type == 'DependentCurrent'%} label="{{item.phase}}" {% endif %} 
+		{% if item.type == 'CurrentLabel' or item.type == 'VoltageLabel' %} 
+			phase="{{item.phase}}" 
+			isQuestion="{{item.isQuestion}}" 
+			set="{{item.set}}"
+		{% endif %} 
+		{% if item.type == 'Impedance' %} real="0" imaginary="0" {% endif %}
+		{% if item.type == 'Resistor' %} name="R{{item.id}}" {% endif %} 
+		{% if item.type == 'Capacitor' %} name="C{{item.id}}" {% endif %}
+		{% if item.type == 'Inductor' %} name="L{{item.id}}" {% endif %}
+		{% if item.type == 'Voltage' %} name="V{{item.id}}" {% endif %}
+		{% if item.type == 'Current' %} name="I{{item.id}}" {% endif %}
+		{% if item.type == 'CurrentLabel' %} name="I{{item.id}}" {% endif %}
+		{% if item.type == 'VoltageLabel' %} name="V{{item.id}}" {% endif %} 
+		{% if item.type == 'Impedance' %} name="Z{{item.id}}" {% endif %} 
+		{% if item.type == 'DependentVoltage' %} name="DV{{item.id}}" {% endif %}
+		{% if item.type == 'DependentCurrent' %} name="DC{{item.id}}" {% endif %}>
+	  <mxCell parent="1" vertex="1"
+		{% if item.type == 'Resistor' %} style="shape=Resistor 2;verticalLabelPosition=top;verticalAlign=bottom;strokeColor=#4500BB;rotation={{item.rotation}};" {% endif %} 
+		{% if item.type == 'Capacitor' %} style="shape=Capacitor 1;verticalLabelPosition=top;verticalAlign=bottom;strokeColor=#EE44EE;rotation={{item.rotation}};" {% endif %}
+		{% if item.type == 'Inductor' and item.rotation == 0 %} style="shape=Inductor 5;verticalLabelPosition=top;verticalAlign=bottom;strokeColor=#990099;" {% endif %}
+		{% if item.type == 'Inductor' and item.rotation == 90 %} style="shape=Inductor 5V;verticalLabelPosition=top;verticalAlign=bottom;strokeColor=#990099;rotation=90;" {% endif %}
+		{% if item.type == 'Voltage' %} style="shape=DC Source 3;verticalLabelPosition=top;verticalAlign=bottom;strokeColor=#C02020;rotation={{item.rotation}};" {% endif %}
+		{% if item.type == 'Current' %} style="shape=DC Source 2;verticalLabelPosition=top;verticalAlign=bottom;strokeColor=#8B4513;rotation={{item.rotation}};" {% endif %}
+		{% if item.type == 'CurrentLabel' and item.rotation != 180 %} style="shape=CurrentLabel;strokeColor=#A0A0A0;verticalAlign=bottom;verticalLabelPosition=top;rotation={{item.rotation}};" {% endif %}
+		{% if item.type == 'CurrentLabel' and item.rotation == 180 %} style="shape=CurrentLabelReverse;strokeColor=#A0A0A0;verticalAlign=bottom;verticalLabelPosition=top;" {% endif %}
+		{% if item.type == 'VoltageLabel' %} style="shape=VoltageLabel;strokeColor=#A0A0A0;" {% endif %} 
+		{% if item.type == 'Impedance' %} style="shape=Impedance;strokeColor=#AAAA00;rotation={{item.rotation}};" {% endif %} 
+		{% if item.type == 'DependentVoltage' %} style="shape=Dependent Source 3;verticalLabelPosition=top;verticalAlign=bottom;strokeColor=#C02020;rotation={{item.rotation}};" {% endif %}
+		{% if item.type == 'DependentCurrent' %} style="shape=Dependent Source 2;verticalLabelPosition=top;verticalAlign=bottom;strokeColor=#8B4513;rotation={{item.rotation}};" {% endif %} >
+		<mxGeometry as="geometry"
+			{% if item.type == 'Capacitor' or item.type == 'Inductor' or item.type == 'Voltage' or item.type == 'Current' or item.type == 'DependentVoltage' or item.type == 'DependentCurrent' %} y="{{item.y-10}}"
+			{% else %} y="{{item.y}}" {% endif %}
+			{% if item.type == 'Voltage' or item.type == 'Current' or item.type == 'DependentVoltage' or item.type == 'DependentCurrent' %} x="{{item.x+20}}" 
+			{% else %} x="{{item.x}}" {% endif %} 
+			{% if item.type == 'Resistor' or item.type == 'CurrentLabel' or item.type == 'Impedance' %} width="80" height="20" {% endif %} 
+			{% if item.type == 'Capacitor' %} width="80" height="40" {% endif %}
+			{% if item.type == 'Inductor' %} width="80" height="31" {% endif %}
+			{% if item.type == 'Voltage' or item.type == 'Current' or item.type == 'DependentVoltage' or item.type == 'DependentCurrent' %} width="40" height="40" {% endif %}
+			{% if item.type == 'VoltageLabel' %} width="30" height="60" {% endif %}  />
+	  </mxCell>
+	</Component>
+	{% endif %}
+	{% endfor %}
+	{% for item in edges %}
+	<mxCell id="{{item.id}}" style="sourcePort={{item.source_port}};entryPerimeter=0;targetPort={{item.target_port}}" parent="1" source="{{item.source}}" target="{{item.target}}" edge="1">
+	  <mxGeometry relative="1" as="geometry"/>
+	</mxCell>
+	{% endfor %}
+	<Ground id="{{idGround}}">
+	  <mxCell style="shape=Signal Ground;strokeColor=#000000;" parent="1" vertex="1">
+		<mxGeometry x="240.1" y="349.8" width="20" height="20" as="geometry"/>
+	  </mxCell>
+	</Ground>
+  </root>
+</mxGraphModel>
