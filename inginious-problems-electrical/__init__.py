@@ -20,8 +20,9 @@ from generator import rand_circuit
 
 
 class ElectricalPage(object):
-	def GET(self, param):
-		nbrCycle, direct, reverse = param.split("&")
+	def GET(self):
+		param = web.input()
+		nbrCycle, direct, reverse = param.input_cycle, param.input_direct, param.input_reverse
 		return rand_circuit(int(nbrCycle), direct, reverse)
 
 
@@ -111,7 +112,7 @@ class DisplayableElectricalProblem(ElectricalProblem, DisplayableProblem):
 def init(plugin_manager, course_factory, client, plugin_config):
     # TODO: Replace by shared static middleware and let webserver serve the files
 	plugin_manager.add_page('/plugins/electrical/static/(.+)', StaticMockPage)
-	plugin_manager.add_page('/plugins/electrical/generator/(.+)', ElectricalPage)
+	plugin_manager.add_page('/plugins/electrical/generator', ElectricalPage)
 	plugin_manager.add_hook("javascript_header", lambda: "/plugins/electrical/static/mxgraph/mxClient.min.js")
 	plugin_manager.add_hook("javascript_header", lambda: "/plugins/electrical/static/electrical.js")
 	course_factory.get_task_factory().add_problem_type(DisplayableElectricalProblem)

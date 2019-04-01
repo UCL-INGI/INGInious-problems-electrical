@@ -266,7 +266,7 @@ $#
 						reverse = jQuery("#input_reverse-thegraph").prop( "checked" ) ? "on" : ""
 						jQuery.ajax({
 				          type: "GET",
-				          url: "/plugins/electrical/generator/"+nbrCycle+"&"+direct+"&"+reverse,
+				          url: "/plugins/electrical/generator?input_cycle="+nbrCycle+"&"+"input_direct="+direct+"&"+"input_reverse="+reverse,
 				          success:function(result) { 
 				            xmlText = result   
 				            var parser = new DOMParser();

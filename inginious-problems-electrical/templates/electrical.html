@@ -40,14 +40,14 @@ $#
 		else
 		{
             // Adds an option to view the XML of the graph
-            /*var xmlButton = mxUtils.button('View XML', function()
+            var xmlButton = mxUtils.button('View XML', function()
             {
 	            var encoder = new mxCodec();
 	            var node = encoder.encode(graph.getModel());
 	            mxUtils.popup(mxUtils.getPrettyXml(node), true);
             })
             xmlButton.style.position = 'relative';
-            document.body.appendChild(xmlButton);*/
+            document.body.appendChild(xmlButton);
 			// Disables the built-in context menu
 			mxEvent.disableContextMenu(container);
 			//The list of xml files
@@ -382,7 +382,7 @@ $#
             if(input["@random"].length > 0) { 
                 jQuery.ajax({
                   type: "GET",
-                  url: "/plugins/electrical/generator/"+`$:input_cycle`+"&"+`$:input_direct`+"&"+`$:input_reverse`,
+                  url: "/plugins/electrical/generator?input_cycle="+`$:input_cycle`+"&"+"input_direct="+`$:input_direct`+"&"+"input_reverse="+`$:input_reverse`,
                   success:function(result) { 
                     xmlText = result   
                     var parser = new DOMParser();
