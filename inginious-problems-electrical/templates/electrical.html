@@ -40,14 +40,14 @@ $#
 		else
 		{
             // Adds an option to view the XML of the graph
-            var xmlButton = mxUtils.button('View XML', function()
+            /*var xmlButton = mxUtils.button('View XML', function()
             {
 	            var encoder = new mxCodec();
 	            var node = encoder.encode(graph.getModel());
 	            mxUtils.popup(mxUtils.getPrettyXml(node), true);
             })
             xmlButton.style.position = 'relative';
-            document.body.appendChild(xmlButton);
+            document.body.appendChild(xmlButton);*/
 			// Disables the built-in context menu
 			mxEvent.disableContextMenu(container);
 			//The list of xml files
@@ -315,44 +315,7 @@ $#
             var equCnt = 1
             var nodeButton = mxUtils.button('New equation', function()
             {
-                var div = document.createElement('div')
-                div.id = equCnt
-                var equations = document.getElementById('equations');
-                equations.appendChild(div)
-                var equation = document.createTextNode('Equation '+equCnt+' : ')
-                var equationBox = document.createElement('input');
-                equationBox.type = 'text';
-                equationBox.name = 'equation';
-                equationBox.style.width = '800px';
-                mxEvent.addListener(equationBox, 'keypress', function (evt)
-			    {
-				    if (evt.keyCode == /*enter*/13)
-				    {
-                        evt.preventDefault();
-				    }
-			    });
-                div.appendChild(equation);
-                div.appendChild(equationBox);
-                
-                var removeButton = mxUtils.button('Remove', function() 
-                {
-                    document.getElementById(div.id).remove();
-                })
-                removeButton.addEventListener('click', event => event.preventDefault());
-                div.appendChild(removeButton)
-
-                var phaseSignButton = mxUtils.button('∠', function() 
-                {
-                    var cursorPosition = equationBox.selectionStart
-                    var equation = equationBox.value
-                    equationBox.value = equation.substring(0, cursorPosition)+'∠'+equation.substring(cursorPosition)
-                    equationBox.focus()
-                    equationBox.setSelectionRange(cursorPosition+1, cursorPosition+1)
-                })
-                phaseSignButton.addEventListener('click', event => event.preventDefault());
-                phaseSignButton.style.marginBottom = '50px';
-                div.appendChild(phaseSignButton)
-                equCnt++
+                addEquation(equCnt, '');
             })
             nodeButton.style.position = 'relative';
             nodeButton.addEventListener('click', event => event.preventDefault());
@@ -569,6 +532,49 @@ $#
 			}
 		}
 	};
+
+	function addEquation(equCnt, initEquation) {
+		var div = document.createElement('div')
+		div.id = equCnt
+		var equations = document.getElementById('equations');
+		equations.appendChild(div)
+		var equation = document.createTextNode('Equation '+equCnt+' : ')
+		var equationBox = document.createElement('input');
+		equationBox.type = 'text';
+		equationBox.name = 'equation';
+		equationBox.style.width = '800px';
+		mxEvent.addListener(equationBox, 'keypress', function (evt)
+		{
+			if (evt.keyCode == /*enter*/13)
+			{
+		        evt.preventDefault();
+			}
+		});
+		div.appendChild(equation);
+		div.appendChild(equationBox);
+
+		equationBox.value = initEquation
+		
+		var removeButton = mxUtils.button('Remove', function() 
+		{
+		    document.getElementById(div.id).remove();
+		})
+		removeButton.addEventListener('click', event => event.preventDefault());
+		div.appendChild(removeButton)
+
+		var phaseSignButton = mxUtils.button('∠', function() 
+		{
+		    var cursorPosition = equationBox.selectionStart
+		    var equation = equationBox.value
+		    equationBox.value = equation.substring(0, cursorPosition)+'∠'+equation.substring(cursorPosition)
+		    equationBox.focus()
+		    equationBox.setSelectionRange(cursorPosition+1, cursorPosition+1)
+		})
+		phaseSignButton.addEventListener('click', event => event.preventDefault());
+		phaseSignButton.style.marginBottom = '50px';
+		div.appendChild(phaseSignButton)
+		equCnt++
+	}
 
     function getLabelNames(graph) {
         var labelNames = []; 

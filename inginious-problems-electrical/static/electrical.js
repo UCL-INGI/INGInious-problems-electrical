@@ -2,7 +2,14 @@ function load_input_electrical(submissionid, key, input) {
     if(key in input) {
         document.getElementById('graphContainer').innerHTML = "";  // clean the older graph
         document.getElementById('buttons').innerHTML = ""; // clean the older buttons
-        document.getElementById('equations').innerHTML = ""; // clean the older equations
+		// clean the older equations
+		var i = 1
+		while(i < document.getElementById('equations').childNodes.length){
+			var element = document.getElementById('equations').childNodes[i]
+			element.parentNode.removeChild(element)
+			i++
+		}
+
         oldSubmission(document.getElementById('graphContainer'), input[key], input["equations"]);
     }
     else
