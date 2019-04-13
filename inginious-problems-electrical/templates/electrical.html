@@ -103,7 +103,7 @@ $#
                         var display = "";
 
 				        if(cell.getAttribute('type', '') == 'Voltage') {
-				            display = value + '\u2220' + phase + "V";
+				            display = value + '\u2220' + phase + "°V";
                         }
                         else if(cell.getAttribute('type', '') == 'Resistor') {
                             display = value + '\u03A9';
@@ -115,22 +115,22 @@ $#
                             display = 'j' + value + '\u03A9';
                         }
                         else if(cell.getAttribute('type', '') == 'Current') {
-                            display = value + '\u2220' + phase + 'A';
+                            display = value + '\u2220' + phase + '°A';
                         }
                         else if((cell.getAttribute('type', '') == 'VoltageLabel' || cell.getAttribute('type', '') == 'CurrentLabel') && cell.getAttribute('isQuestion', '') == "true") {
                             if(cell.getAttribute('type', '') == 'VoltageLabel') {                               
-                                display = name + " = " + value + '\u2220' + phase + 'V';
+                                display = name + " = " + value + '\u2220' + phase + '°V';
                             }
                             else {
-                                display = name + " = " + value + '\u2220' + phase + 'A';
+                                display = name + " = " + value + '\u2220' + phase + '°A';
                             }
                         }
 						else if((cell.getAttribute('type', '') == 'VoltageLabel' || cell.getAttribute('type', '') == 'CurrentLabel') && cell.getAttribute('set', '') == "true") {
                             if(cell.getAttribute('type', '') == 'VoltageLabel') {        
-                                display = value + '\u2220' + phase + 'V';
+                                display = value + '\u2220' + phase + '°V';
                             }
                             else {
-                                display = value + '\u2220' + phase + 'A';
+                                display = value + '\u2220' + phase + '°A';
                             }
                         }
                         else if(cell.getAttribute('type', '') == 'DependentVoltage' || cell.getAttribute('type', '') == 'DependentCurrent') {
@@ -453,7 +453,7 @@ $#
 				    var attrs = cell.value.attributes;					
 				    for (var i = 0; i < attrs.length; i++)
 				    {	
-                        if(attrs[i].nodeName != 'type' && attrs[i].nodeName != 'name' && attrs[i].nodeName != 'isQuestion' && attrs[i].nodeName != 'set') { 
+                        if(attrs[i].nodeName != 'type' && attrs[i].nodeName != 'name' && attrs[i].nodeName != 'isQuestion' && attrs[i].nodeName != 'set' && attrs[i].nodeName != 'hidden_real' && attrs[i].nodeName != 'hidden_imaginary') { 
                             createTextField(graph, form, cell, attrs[i]);
                         }
 				    }
@@ -519,7 +519,10 @@ $#
 		 */
 		function createTextField(graph, form, cell, attribute)
 		{
-			var input = form.addText(attribute.nodeName + ':', attribute.nodeValue);
+			
+			var name = attribute.nodeName
+			if (name == "value") {name = "magnitude"} // assitant want a better name
+			var input = form.addText(name + ':', attribute.nodeValue);
             input.size = 10;
 			var applyHandler = function()
 			{
@@ -531,9 +534,7 @@ $#
                     
                     try
                     {
-                    	var edit = new mxCellAttributeChange(
-	                           cell, attribute.nodeName,
-	                           newValue);
+                    	var edit = new mxCellAttributeChange(cell, attribute.nodeName, newValue);
                        	graph.getModel().execute(edit);
                     }
                     finally

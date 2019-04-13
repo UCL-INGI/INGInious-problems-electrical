@@ -25,6 +25,12 @@ class Label(Source):
 		self.isQuestion = isQuestion
 		self.set = set
 
+class Impedance(Component):
+	def __init__(self, value, type, id, rotation, x, y, hidden_real, hidden_imaginary):
+		Component.__init__(self, value, type, id, rotation, x, y)
+		self.hidden_real = hidden_real
+		self.hidden_imaginary = hidden_imaginary
+
 
 
 def make_random_component(position, rotation, id, components) :
@@ -117,8 +123,16 @@ def add_impedance(cycles, components, id_ground):
 			type = elem.type
 	direction = 'horizontal' if side == 'top' or side == 'bot' else 'vertical'
 	rotation = 0 if direction == 'horizontal' else 90
+	hidden_real = 0
+	hidden_imaginary = 0
+	if elem.type == 'Resistor':
+		hidden_real = elem.value
+	elif elem.type == 'Capacitor':
+		hidden_imaginary = -elem.value
+	elif elem.type == 'Inductor':
+		hidden_imaginary = elem.value
 	elem.type = "Impedance"
-	components[elem.id] = Component(0, "Impedance", elem.id, rotation, elem.x, elem.y)
+	components[elem.id] = Impedance(0, "Impedance", elem.id, rotation, elem.x, elem.y, hidden_real, hidden_imaginary)
 
 
 # make sure to not short cut the circuit by adding a current label

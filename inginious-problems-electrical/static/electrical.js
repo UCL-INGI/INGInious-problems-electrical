@@ -2,7 +2,8 @@ function load_input_electrical(submissionid, key, input) {
     if(key in input) {
         document.getElementById('graphContainer').innerHTML = "";  // clean the older graph
         document.getElementById('buttons').innerHTML = ""; // clean the older buttons
-        oldSubmission(document.getElementById('graphContainer'), input[key]);
+        document.getElementById('equations').innerHTML = ""; // clean the older equations
+        oldSubmission(document.getElementById('graphContainer'), input[key], input["equations"]);
     }
     else
         console.log("pas de xml");
@@ -20,7 +21,7 @@ function studio_init_template_electrical(well, pid, problem)
         $('#input_reverse-' + pid, well).prop('checked', problem["input_reverse"] == "on");
 }
 
-function oldSubmission(container, xmlText)
+function oldSubmission(container, xmlText, equationString)
 {
 	// Checks if the browser is supported
 	if (!mxClient.isBrowserSupported())
@@ -85,7 +86,7 @@ function oldSubmission(container, xmlText)
                     var display = "";
 
 			        if(cell.getAttribute('type', '') == 'Voltage') {
-			            display = value + '\u2220' + phase + "V";
+			            display = value + '\u2220' + phase + "°V";
                     }
                     else if(cell.getAttribute('type', '') == 'Resistor') {
                         display = value + '\u03A9';
@@ -97,22 +98,22 @@ function oldSubmission(container, xmlText)
                         display = 'j' + value + '\u03A9';
                     }
                     else if(cell.getAttribute('type', '') == 'Current') {
-                        display = value + '\u2220' + phase + 'A';
+                        display = value + '\u2220' + phase + '°A';
                     }
                     else if((cell.getAttribute('type', '') == 'VoltageLabel' || cell.getAttribute('type', '') == 'CurrentLabel') && cell.getAttribute('isQuestion', '') == "true") {
                         if(cell.getAttribute('type', '') == 'VoltageLabel') {                               
-                            display = name + " = " + value + '\u2220' + phase + 'V';
+                            display = name + " = " + value + '\u2220' + phase + '°V';
                         }
                         else {
-                            display = name + " = " + value + '\u2220' + phase + 'A';
+                            display = name + " = " + value + '\u2220' + phase + '°A';
                         }
                     }
 					else if((cell.getAttribute('type', '') == 'VoltageLabel' || cell.getAttribute('type', '') == 'CurrentLabel') && cell.getAttribute('set', '') == "true") {
                         if(cell.getAttribute('type', '') == 'VoltageLabel') {        
-                            display = value + '\u2220' + phase + 'V';
+                            display = value + '\u2220' + phase + '°V';
                         }
                         else {
-                            display = value + '\u2220' + phase + 'A';
+                            display = value + '\u2220' + phase + '°A';
                         }
                     }
                     else if(cell.getAttribute('type', '') == 'DependentVoltage' || cell.getAttribute('type', '') == 'DependentCurrent') {
@@ -297,44 +298,7 @@ function oldSubmission(container, xmlText)
         var equCnt = 1
         var nodeButton = mxUtils.button('New equation', function()
         {
-            var div = document.createElement('div')
-            div.id = equCnt
-            var equations = document.getElementById('equations');
-            equations.appendChild(div)
-            var equation = document.createTextNode('Equation '+equCnt+' : ')
-            var equationBox = document.createElement('input');
-            equationBox.type = 'text';
-            equationBox.name = 'equation';
-            equationBox.style.width = '800px';
-            mxEvent.addListener(equationBox, 'keypress', function (evt)
-		    {
-			    if (evt.keyCode == /*enter*/13)
-			    {
-                    evt.preventDefault();
-			    }
-		    });
-            div.appendChild(equation);
-            div.appendChild(equationBox);
-            
-            var removeButton = mxUtils.button('Remove', function() 
-            {
-                document.getElementById(div.id).remove();
-            })
-            removeButton.addEventListener('click', event => event.preventDefault());
-            div.appendChild(removeButton)
-
-            var phaseSignButton = mxUtils.button('∠', function() 
-            {
-                var cursorPosition = equationBox.selectionStart
-                var equation = equationBox.value
-                equationBox.value = equation.substring(0, cursorPosition)+'∠'+equation.substring(cursorPosition)
-                equationBox.focus()
-                equationBox.setSelectionRange(cursorPosition+1, cursorPosition+1)
-            })
-            phaseSignButton.addEventListener('click', event => event.preventDefault());
-            phaseSignButton.style.marginBottom = '50px';
-            div.appendChild(phaseSignButton)
-            equCnt++
+            addEquation(equCnt, '');
         })
         nodeButton.style.position = 'relative';
         nodeButton.addEventListener('click', event => event.preventDefault());
@@ -358,14 +322,24 @@ function oldSubmission(container, xmlText)
 		    }
 	    });
 
+		// recovery of the graph and equations of the student
         mxVertexHandler.prototype.rotationEnabled = true;
-        
         var parser = new DOMParser();
         xml = parser.parseFromString(xmlText, "text/xml");
         var root = xml.documentElement;
         var dec = new mxCodec(root.ownerDocument);
         dec.decode(root, graph.getModel());
         mxVertexHandler.prototype.rotationEnabled = false;
+        if (equationString != "") {
+            equations = equationString.split(' NextEquation ')
+		    for(var i = 0; i < equations.length; i++) {
+                equCnt = equations[i].split(' ID ')[0]
+                initEquation = equations[i].split(' ID ')[1]
+                addEquation(equCnt, initEquation)
+                equCnt++ 
+            }
+        }
+		
 
         var labelNames = getLabelNames(graph)
 		
@@ -415,7 +389,7 @@ function oldSubmission(container, xmlText)
 			    var attrs = cell.value.attributes;					
 			    for (var i = 0; i < attrs.length; i++)
 			    {	
-                    if(attrs[i].nodeName != 'type' && attrs[i].nodeName != 'name' && attrs[i].nodeName != 'isQuestion' && attrs[i].nodeName != 'set') { 
+                    if(attrs[i].nodeName != 'type' && attrs[i].nodeName != 'name' && attrs[i].nodeName != 'isQuestion' && attrs[i].nodeName != 'set' && attrs[i].nodeName != 'hidden_real' && attrs[i].nodeName != 'hidden_imaginary') { 
                         createTextField(graph, form, cell, attrs[i]);
                     }
 			    }
@@ -481,7 +455,9 @@ function oldSubmission(container, xmlText)
 	 */
 	function createTextField(graph, form, cell, attribute)
 	{
-		var input = form.addText(attribute.nodeName + ':', attribute.nodeValue);
+		var name = attribute.nodeName
+		if (name == "value") {name = "magnitude"} // assitant want a better name
+		var input = form.addText(name + ':', attribute.nodeValue);
         input.size = 10;
 		var applyHandler = function()
 		{
@@ -530,6 +506,49 @@ function oldSubmission(container, xmlText)
 		}
 	}
 };
+
+function addEquation(equCnt, initEquation) {
+    var div = document.createElement('div')
+    div.id = equCnt
+    var equations = document.getElementById('equations');
+    equations.appendChild(div)
+    var equation = document.createTextNode('Equation '+equCnt+' : ')
+    var equationBox = document.createElement('input');
+    equationBox.type = 'text';
+    equationBox.name = 'equation';
+    equationBox.style.width = '800px';
+    mxEvent.addListener(equationBox, 'keypress', function (evt)
+    {
+	    if (evt.keyCode == /*enter*/13)
+	    {
+            evt.preventDefault();
+	    }
+    });
+    div.appendChild(equation);
+    div.appendChild(equationBox);
+
+    equationBox.value = initEquation
+    
+    var removeButton = mxUtils.button('Remove', function() 
+    {
+        document.getElementById(div.id).remove();
+    })
+    removeButton.addEventListener('click', event => event.preventDefault());
+    div.appendChild(removeButton)
+
+    var phaseSignButton = mxUtils.button('∠', function() 
+    {
+        var cursorPosition = equationBox.selectionStart
+        var equation = equationBox.value
+        equationBox.value = equation.substring(0, cursorPosition)+'∠'+equation.substring(cursorPosition)
+        equationBox.focus()
+        equationBox.setSelectionRange(cursorPosition+1, cursorPosition+1)
+    })
+    phaseSignButton.addEventListener('click', event => event.preventDefault());
+    phaseSignButton.style.marginBottom = '50px';
+    div.appendChild(phaseSignButton)
+    equCnt++
+}
 
 function getLabelNames(graph) {
     var labelNames = []; 

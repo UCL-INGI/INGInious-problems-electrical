@@ -86,7 +86,7 @@ $#
 						        var value = cell.getAttribute('value', '');
                                 var phase = cell.getAttribute('phase', '');
 						        if(cell.getAttribute('type', '') == 'Voltage') {
-						            return value + '\u2220' + phase + "V";
+						            return value + '\u2220' + phase + "°V";
                                 }
                                 else if(cell.getAttribute('type', '') == 'Resistor') {
                                     return value + '\u03A9';
@@ -98,14 +98,14 @@ $#
                                     return 'j' + value + '\u03A9';
                                 }
                                 else if(cell.getAttribute('type', '') == 'Current') {
-                                    return value + '\u2220' + phase + 'A';
+                                    return value + '\u2220' + phase + '°A';
                                 }
                                 else if(cell.getAttribute('type', '') == 'DependentVoltage' || cell.getAttribute('type', '') == 'DependentCurrent') {
                                     var dependency = cell.getAttribute('label', '');
                                     return value + dependency;                                    
                                 }
                                 else if((cell.getAttribute('type', '') == 'VoltageLabel' || cell.getAttribute('type', '') == 'CurrentLabel') && cell.getAttribute('set', '') == "true") {
-                                    return value + '\u2220' + phase + 'V';
+                                    return value + '\u2220' + phase + '°V';
                                 }
                                 else {
                                     return name;
@@ -357,7 +357,7 @@ $#
                                 }
                             }
                             else if(cell.value.getAttribute('type', '') == "Impedance") {
-                                if(attrs[i].nodeName == "name") {
+                                if(attrs[i].nodeName == "name" || attrs[i].nodeName == "hidden_real" || attrs[i].nodeName == "hidden_imaginary") {
                                     createTextField(graph, form, cell, attrs[i]);
                                 }
                             }
@@ -467,7 +467,7 @@ $#
                             var currentRotation = mxUtils.getValue(graph.view.getState(cell).style,mxConstants.STYLE_ROTATION,0);
                             graph.setCellStyles(mxConstants.STYLE_ROTATION, currentRotation+90, [cell])
 
-                            //bug alignement on grid
+                            //problem alignement on grid
                             if(cell.getStyle().split(';')[0] == 'shape=Inductor 5') {
                                 graph.setCellStyles(mxConstants.STYLE_SHAPE, 'Inductor 5V', [cell])
                             }
@@ -497,7 +497,9 @@ $#
 		         */
 		        function createTextField(graph, form, cell, attribute)
 		        {
-			        var input = form.addText(attribute.nodeName + ':', attribute.nodeValue);
+			        var name = attribute.nodeName
+					if (name == "value") {name = "magnitude"} // assitant wants a better name
+					var input = form.addText(name + ':', attribute.nodeValue);
                     input.size = 10;
                     input.id = attribute.nodeName
 
@@ -632,6 +634,8 @@ $#
                         if(type == 'Impedance') {
                             c.setAttribute('real', '0');
                             c.setAttribute('imaginary', '0');
+							c.setAttribute('hidden_real', 0);
+							c.setAttribute('hidden_imaginary', 0);
                         }
                         if(type != 'VoltageLabel' && type != 'Impedance') {
                             c.setAttribute('value', '0');

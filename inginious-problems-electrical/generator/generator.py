@@ -8,6 +8,7 @@ from parser_xml import *
 import subprocess
 from math import *
 from random import *
+import tempfile
 
 PATH_TO_PLUGIN = os.path.abspath(os.path.dirname(__file__))
 
@@ -29,6 +30,7 @@ def rand_circuit(nbrCycles, direct, reverse):
 	top_left = (10.1, 99.8)
 	offset = 100
 	nbrCycles = nbrCycles if nbrCycles <= 10 else 10 # can't make more split
+	nbrCycles = nbrCycles if nbrCycles > 0 else 1 
 	positions_horizontal = []
 	for i in range(4) : 
 		positions_horizontal.append((top_right[0]+offset*i, top_right[1]))
@@ -114,6 +116,7 @@ def rand_circuit(nbrCycles, direct, reverse):
 				component1, component2, direction, cycleChosen, index1, index2 = rand_split(cycles)
 			except RecursionError :
 				# no more split possible
+				return rand_circuit(nbrCycles, direct, reverse)
 				break
 			
 			positions, port1, port2, rotation = compute_split(component1, component2, offset, direction, cycleChosen, id_ground)
@@ -240,24 +243,30 @@ def rand_circuit(nbrCycles, direct, reverse):
 	
 
 	# simulate and check the circuit
-	parse_xml(xml)
-	with open('result.txt', 'w') as output :
-		bashCommand = "ngspice circuitSpice.cir"
-		process = subprocess.Popen(bashCommand.split(), stdout=output)
-		process.communicate()
+	circuitSpice = tempfile.NamedTemporaryFile(mode="w+")
+	answer = tempfile.NamedTemporaryFile(mode="w+")
+	result = tempfile.NamedTemporaryFile(mode="w+")
+	parse_xml(xml, circuitSpice, answer)
+	
+	bashCommand = "ngspice "+circuitSpice.name
+	process = subprocess.Popen(bashCommand.split(), stdout=result)
+	process.communicate()
+	result.flush()
+	subprocess.call(['cat', result.name])
+		
+	circuitSpice.close()
 
-	result = open("result.txt", 'r')
 	result_lines = []
-	for line in result :
+	for line in open(result.name, "r") :
 		result_lines.append(line)
 	result.close()
 	if result_lines[-1].split()[0] == 'print':
 		# bug computation ngspice, bad circuit (ex:inductance alone in paralel with the source)
 		return rand_circuit(nbrCycles, direct, reverse)
 
-	answer = open("Answers.txt", 'r')
+	
 	answers = {}
-	for line in answer :
+	for line in open(answer.name, "r") :
 		words = line.split()
 		answers[words[0]] = (words[2], words[4])
 	answer.close()
@@ -284,7 +293,7 @@ def rand_circuit(nbrCycles, direct, reverse):
 
 
 
-	# impedence question
+	# impedence question TODO: replace more than just one component to have real and imaginary values
 	# simulate the circuit to have a measure and then hide a composent
 	if question_choice == "impI" or question_choice == "impV":
 		add_impedance(cycles, components, id_ground)

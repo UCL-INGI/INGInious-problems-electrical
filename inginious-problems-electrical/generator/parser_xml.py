@@ -1,14 +1,12 @@
 import xml.etree.ElementTree as ET
 from string import *
 import sys
+import subprocess
 
-def parse_xml(xml):
+def parse_xml(xml, my_file, file_answers):
 
 	root = ET.fromstring(xml).find('root')
-	my_file = open("circuitSpice.cir", 'w')
 	my_file.write("Spice circuit Gen\n\n")
-
-	file_answers = open("Answers.txt", 'w')
 
 
 	listEdge = []
@@ -180,6 +178,7 @@ def parse_xml(xml):
 			elif typelabel == 'CurrentLabel':
 				my_file.write('F%s %s %s %s %s\n' % (node.get('name'), node.get('node2'), node.get('node1'), 'V'+label, node.get('value'))) 
 		elif node.get('type') == 'Impedance':
+			file_answers.write('%sStudent : %s, %s\n' % (node.get('name'), node.get('real'), node.get('imaginary')))
 			if float(node.get('imaginary')) > 0:
 				my_file.write('R%s %s %s %s \n' % (node.get('name'), node.get('node1'), len(listNode), node.get('real')))
 				my_file.write('L%s %s %s %s \n' % (node.get('name'), len(listNode) , node.get('node2'), node.get('imaginary')))
@@ -268,6 +267,8 @@ def parse_xml(xml):
 	my_file.write("exit\n")
 	my_file.write(".endc\n")
 	my_file.write(".end\n")
-
-
-	my_file.close()
+	my_file.flush()
+	subprocess.call(['cat', my_file.name])
+	
+	file_answers.flush()
+	subprocess.call(['cat', file_answers.name])

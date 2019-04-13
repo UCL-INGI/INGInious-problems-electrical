@@ -1,48 +1,18 @@
 from random import *
 
 def can_split_vert(cycle) :
-	left_elem, right_elem, top_elem, bot_elem = cycle.left, cycle.right, cycle.top, cycle.bot
-	if not top_elem or not bot_elem :
+	if not cycle.top or not cycle.bot :
 		return False
-	if (len(top_elem) > 1 and len(bot_elem) >= 1) or (len(top_elem) >= 1 and len(bot_elem) > 1) :
-		return True
-	if not left_elem and not right_elem :
-		return False
-	if not left_elem :
-		if int(top_elem[0].x+50) == int(right_elem[0].x) :
-			return False
-		else :
-			return True
-	if not right_elem :
-		if int(top_elem[0].x-50) == int(left_elem[0].x) :
-			return False
-		else :
-			return True
-	if int(right_elem[0].x - left_elem[0].x) == 100 :
+	if int(cycle.limitR) - int(cycle.limitL) == 100 :
 		return False
 	return True
 
 
 
 def can_split_hor(cycle) :
-	left_elem, right_elem, top_elem, bot_elem = cycle.left, cycle.right, cycle.top, cycle.bot
-	if not left_elem or not right_elem :
+	if not cycle.left or not cycle.right :
 		return False
-	if (len(left_elem) > 1 and len(right_elem) >= 1) or (len(left_elem) >= 1 and len(right_elem) > 1) :
-		return True
-	if not bot_elem and not top_elem :
-		return False
-	if not bot_elem :
-		if int(left_elem[0].y-50) == int(top_elem[0].y) :
-			return False
-		else :
-			return True
-	if not top_elem :
-		if int(left_elem[0].y+50) == int(bot_elem[0].y) :
-			return False
-		else :
-			return True
-	if int(bot_elem[0].y - top_elem[0].y) == 100 :
+	if int(cycle.limitB) - int(cycle.limitT) == 100 :
 		return False
 	return True
 
@@ -70,7 +40,7 @@ def rand_split(cycles) :
 	indexCycle = randint(0, len(cycles) -1)
 	cycleChosen = cycles[indexCycle]
 	split = randint(0, 1)
-	if split == 0 and  can_split_hor(cycleChosen) :
+	if split == 0 and can_split_hor(cycleChosen) :
 		l_cycle = cycleChosen.left
 		r_cycle = cycleChosen.right
 		index1 = randint(0, len(l_cycle)-1)
