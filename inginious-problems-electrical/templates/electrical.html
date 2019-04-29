@@ -132,18 +132,18 @@ $#
                         else if((cell.getAttribute('type', '') == 'VoltageLabel' || cell.getAttribute('type', '') == 'CurrentLabel') && cell.getAttribute('isQuestion', '') == "true") {
                             if(cell.getAttribute('type', '') == 'VoltageLabel') {                               
                                 if (cell.getAttribute('isPhase', '') == "true") {
-									display = value + '\u2220' + phase + "°V";						
+									display = name + "=" + value + '\u2220' + phase + "°V";						
 								}
 								else {
-									display = value + "V";
+									display = name + "=" + value + "V";
 								}
                             }
                             else {
                                 if (cell.getAttribute('isPhase', '') == "true") {
-									display = value + '\u2220' + phase + "°A";
+									display = name + "=" + value + '\u2220' + phase + "°A";
 								}
 				                else {
-									display = value + "A";
+									display = name + "=" + value + "A";
 								}
                             }
                         }
