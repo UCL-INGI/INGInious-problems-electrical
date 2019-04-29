@@ -11,6 +11,7 @@
 			phase="{{item.phase}}" 
 			isQuestion="{{item.isQuestion}}" 
 			set="{{item.set}}"
+			isPhase="true"
 		{% endif %} 
 		{% if item.type == 'Impedance' %} real="0" imaginary="0" hidden_real="{{item.hidden_real}}" hidden_imaginary="{{item.hidden_imaginary}}" {% endif %}
 		{% if item.type == 'Resistor' %} name="R{{item.id}}" {% endif %} 
