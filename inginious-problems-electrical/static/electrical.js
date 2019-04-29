@@ -93,7 +93,13 @@ function oldSubmission(container, xmlText, equationString)
                     var display = "";
 
 			        if(cell.getAttribute('type', '') == 'Voltage') {
-			            display = value + '\u2220' + phase + "°V";
+			            display = value;
+						if(phase != 0) {
+							display = display + '\u2220' + phase + "°V";
+						}
+						else {
+							display = display + "V";
+						}
                     }
                     else if(cell.getAttribute('type', '') == 'Resistor') {
                         display = value + '\u03A9';
@@ -105,22 +111,50 @@ function oldSubmission(container, xmlText, equationString)
                         display = 'j' + value + '\u03A9';
                     }
                     else if(cell.getAttribute('type', '') == 'Current') {
-                        display = value + '\u2220' + phase + '°A';
+                        display = value;
+						if(phase != 0) {
+							display = display + '\u2220' + phase + "°A";
+						}
+						else {
+							display = display + "A";
+						}
                     }
                     else if((cell.getAttribute('type', '') == 'VoltageLabel' || cell.getAttribute('type', '') == 'CurrentLabel') && cell.getAttribute('isQuestion', '') == "true") {
                         if(cell.getAttribute('type', '') == 'VoltageLabel') {                               
-                            display = name + " = " + value + '\u2220' + phase + '°V';
+                            if (cell.getAttribute('isPhase', '') == "true") {
+								display = value + '\u2220' + phase + "°V";						
+							}
+							else {
+								display = value + "V";
+							}
                         }
                         else {
-                            display = name + " = " + value + '\u2220' + phase + '°A';
+                            if (cell.getAttribute('isPhase', '') == "true") {
+								display = value + '\u2220' + phase + "°A";
+							}
+			                else {
+								display = value + "A";
+							}
                         }
                     }
 					else if((cell.getAttribute('type', '') == 'VoltageLabel' || cell.getAttribute('type', '') == 'CurrentLabel') && cell.getAttribute('set', '') == "true") {
                         if(cell.getAttribute('type', '') == 'VoltageLabel') {        
-                            display = value + '\u2220' + phase + '°V';
+                            display = value;
+							if(phase != 0) {
+								display = display + '\u2220' + phase + "°V";
+							}
+							else {
+								display = display + "V";
+							}
                         }
                         else {
-                            display = value + '\u2220' + phase + '°A';
+                            display = value;
+							if(phase != 0) {
+								display = display + '\u2220' + phase + "°A";
+							}
+							else {
+								display = display + "A";
+							}
                         }
                     }
                     else if(cell.getAttribute('type', '') == 'DependentVoltage' || cell.getAttribute('type', '') == 'DependentCurrent') {
@@ -306,6 +340,7 @@ function oldSubmission(container, xmlText, equationString)
         var nodeButton = mxUtils.button('New equation', function()
         {
             addEquation(equCnt, '');
+			equCnt++
         })
         nodeButton.style.position = 'relative';
         nodeButton.addEventListener('click', event => event.preventDefault());
@@ -396,7 +431,7 @@ function oldSubmission(container, xmlText, equationString)
 			    var attrs = cell.value.attributes;					
 			    for (var i = 0; i < attrs.length; i++)
 			    {	
-                    if(attrs[i].nodeName != 'type' && attrs[i].nodeName != 'name' && attrs[i].nodeName != 'isQuestion' && attrs[i].nodeName != 'set' && attrs[i].nodeName != 'hidden_real' && attrs[i].nodeName != 'hidden_imaginary') { 
+                    if(attrs[i].nodeName != 'type' && attrs[i].nodeName != 'name' && attrs[i].nodeName != 'isQuestion' && attrs[i].nodeName != 'set' && attrs[i].nodeName != 'hidden_real' && attrs[i].nodeName != 'hidden_imaginary' && attrs[i].nodeName != 'isPhase' && attrs[i].nodeName != 'phase' || attrs[i].nodeName == 'phase' && cell.value.getAttribute("isPhase") == 'true') {
                         createTextField(graph, form, cell, attrs[i]);
                     }
 			    }
@@ -554,7 +589,6 @@ function addEquation(equCnt, initEquation) {
     phaseSignButton.addEventListener('click', event => event.preventDefault());
     phaseSignButton.style.marginBottom = '50px';
     div.appendChild(phaseSignButton)
-    equCnt++
 }
 
 function getLabelNames(graph) {

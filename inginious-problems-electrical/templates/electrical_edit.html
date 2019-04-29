@@ -369,6 +369,10 @@ $#
 				        div.appendChild(form.getTable());
 
                         if(cell.value.getAttribute('type', '') == "VoltageLabel" || cell.value.getAttribute('type', '') == "CurrentLabel") {
+							var tbl = document.createElement('table');
+							tbl.style.width = '100%';
+							var tbdy = document.createElement('tbody');
+							var tr = document.createElement('tr');
                             // checkbox to make the label a question for the student
                             var isQuestion = document.createElement("INPUT");
                             isQuestion.type = "checkbox";
@@ -396,8 +400,10 @@ $#
                                 }
                                 selectionChanged(graph) // remove value and phase input
                             };
-                            div.appendChild(isQuestion);
-                            div.appendChild(document.createTextNode('Question'));
+                            var td1 = document.createElement('td');
+						    td1.appendChild(isQuestion);
+						    td1.appendChild(document.createTextNode('Question'));
+							tr.appendChild(td1)
 
                             // checkbox to set the value and phase of the label
                             var set = document.createElement("INPUT");
@@ -427,8 +433,45 @@ $#
                                 }
                                 selectionChanged(graph) // remove value and phase input
                             };
-                            div.appendChild(set);
-                            div.appendChild(document.createTextNode('set'));
+                            var td2 = document.createElement('td');
+						    td2.appendChild(set);
+						    td2.appendChild(document.createTextNode('Set'));
+							tr.appendChild(td2)
+
+							// checkbox to make the label with a phase or not
+							var isPhase = document.createElement("INPUT");
+							isPhase.type = "checkbox";
+							isPhase.id = "ph"
+							isPhase.style.marginTop = '10px';
+							isPhase.checked = cell.value.getAttribute('isPhase', '') == "true";
+							isPhase.onclick = function() {
+							    graph.getModel().beginUpdate();
+							    try
+							    {
+							        if ( this.checked ) {                              
+							    	    var edit = new mxCellAttributeChange(cell, 'isPhase', 'true');
+							            graph.getModel().execute(new mxCellAttributeChange(cell, 'phase', '?'));
+							        } else {
+							    	    var edit = new mxCellAttributeChange(cell, 'isPhase', 'false');
+							            graph.getModel().execute(new mxCellAttributeChange(cell, 'phase', '0'));
+							        }
+							       	graph.getModel().execute(edit); // trigger the modification of the graph
+							    }
+							    finally
+							    {
+							        graph.getModel().endUpdate();
+							    }
+							    selectionChanged(graph) // remove value and phase input
+							};
+							var td3 = document.createElement('td');
+							td3.appendChild(isPhase);
+							td3.appendChild(document.createTextNode('Phase'));
+							tr.appendChild(td3);
+							
+							tbdy.appendChild(tr);
+							
+							tbl.appendChild(tbdy);
+							div.appendChild(tbl);
                             
                             // button to switch the type of the label (voltage/current)
                             var switchButton = mxUtils.button('Switch type', function()
@@ -650,6 +693,7 @@ $#
                             c.setAttribute('value', '?')    
                             c.setAttribute('phase', '?')  
                             c.setAttribute('isQuestion', "true")  
+               			    c.setAttribute('isPhase', "true") 
                             c.setAttribute('set', "false")              
                         }
 	                    c.setAttribute('type', type);   
